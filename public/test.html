@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Cloution</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #2563eb, #8b5cf6, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+        }
+        .status {
+            padding: 1rem 2rem;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+        .success {
+            color: #10b981;
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Servidor Funcionando</h1>
+        <p>El servidor de desarrollo está activo y funcionando correctamente</p>
+        <div class="status success">
+            Estado: ONLINE
+        </div>
+        <br>
+        <a href="/" class="btn">Ir a la Página Principal</a>
+    </div>
+</body>
+</html>
