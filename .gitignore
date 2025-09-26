@@ -47,3 +47,32 @@ dist-ssr
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Firebase
+.firebase/
+*.cache
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc.local
+
+# Security
+*.key
+*.pem
+*.cert
+*.crt
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+*.temp
+
+# OS files
+Thumbs.db
+
+# IDE
+*.sublime-project
+*.sublime-workspace
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json

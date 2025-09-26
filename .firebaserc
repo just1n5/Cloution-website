@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "cloution-website",
+    "staging": "cloution-website-staging",
+    "production": "cloution-website-prod"
+  },
+  "targets": {},
+  "etags": {}
+}

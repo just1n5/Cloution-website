@@ -1,18 +1,41 @@
 # Repository Guidelines
+
 ## Project Structure & Module Organization
-src/ houses the React application; place feature UIs under src/components/, route-level views in src/pages/, structured content in src/data/, and reusable hooks in src/hooks/. Heavy media lives in src/icons/ and src/portfolio_screenshots/ grouped by client. public/ serves raw assets, docs/ captures architecture and tooling notes, legal_docs/ stores compliance PDFs, and utils/ collects shared graphics. Review docs/ARCHITECTURE.md before adjusting flows.
+- src/ hosts the React app; keep feature components in src/components/, route views in src/pages/, structured copy in src/data/, and shared hooks in src/hooks/.
+- Heavy visuals belong in src/icons/ or src/portfolio_screenshots/ (group per client), while reusable graphics stay under utils/.
+- Place raw assets in public/, keep architectural notes in docs/, and store compliance PDFs in legal_docs/.
+- Review docs/ARCHITECTURE.md before reshaping flows or adding new sections.
 
 ## Build, Test, and Development Commands
-npm install syncs dependencies after cloning or package updates. npm run dev launches Vite locally and opens the browser. npm run build generates the dist/ bundle; treat warnings as blockers. npm run preview smoke-tests the build. npm run lint runs ESLint. If Node goes sideways, npm run clean && npm run reinstall resets the toolchain.
+- 
+pm install aligns local dependencies after cloning or package updates.
+- 
+pm run dev launches Vite with hot reload and opens the preview.
+- 
+pm run build generates dist/; treat warnings as blockers and address them before merging.
+- 
+pm run preview smoke-tests the build artifact.
+- 
+pm run lint runs ESLint; pair with 
+pm run clean && npm run reinstall if Node tooling misbehaves.
 
 ## Coding Style & Naming Conventions
-Stick to modern React with functional components and hooks. Use two-space indentation, match surrounding quote style, and keep trailing commas in multiline literals. Components, pages, and icon modules use PascalCase; hooks follow useCamelCase; helpers stay camelCase. Tailwind utility order should read layout > spacing > color > motion. Run npm run lint before pushing.
+- Stick to functional React with hooks, two-space indentation, and the surrounding quote style.
+- Maintain trailing commas in multiline literals; Tailwind utilities read layout ? spacing ? color ? motion.
+- Components, pages, and icons use PascalCase (HeroSection.jsx), hooks use useCamelCase, helpers stay camelCase.
 
 ## Testing Guidelines
-No automated suite ships today, so document manual verification with each change. When adding tests, colocate them, e.g., src/components/Hero.test.jsx, and prefer Vitest with React Testing Library. Keep fixtures lightweight and ensure new scripts land in package.json.
+- No automated suite ships yet; document manual verification steps in PR descriptions.
+- When adding tests, colocate files (e.g., src/components/Hero.test.jsx) using Vitest with React Testing Library.
+- Keep fixtures lightweight and ensure any new scripts are added to package.json.
 
 ## Commit & Pull Request Guidelines
-Follow Conventional Commit prefixes such as feat:, fix:, or chore:. Keep commits focused, add rationale when context is non-obvious, and run npm run build plus npm run lint before opening a PR. Pull requests should describe the change, note affected routes or components, link tickets, and include before/after screenshots for UI work.
+- Use Conventional Commit prefixes (eat:, ix:, chore:); keep commits focused and include rationale when context is non-obvious.
+- Run 
+pm run build and 
+pm run lint before opening a PR.
+- PRs should describe the change, note affected routes or components, link tickets, and include before/after screenshots for UI work.
 
 ## Security & Configuration Tips
-Never commit real secrets. Copy .env.example to .env for local setup and update both the example and docs/DEPLOYMENT.md when variables change. Coordinate with stakeholders before touching legal_docs/ and keep shared graphics centralized in utils/.
+- Never commit real secrets; copy .env.example to .env for local runs and update both the example and docs/DEPLOYMENT.md if variables change.
+- Coordinate with stakeholders before editing legal_docs/ and keep shared graphics centralized under utils/.
