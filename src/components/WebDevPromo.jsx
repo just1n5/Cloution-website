@@ -13,7 +13,7 @@ const WebDevPromo = () => {
       name: "WordPress",
       icon: WordPressLogo,
       description:
-        "Para plataformas robustas, escalables y f├íciles de gestionar por tu equipo.",
+        "Para plataformas robustas, escalables y fáciles de gestionar por tu equipo.",
       color: "from-blue-500 to-blue-700",
     },
     {
@@ -21,7 +21,7 @@ const WebDevPromo = () => {
       name: "React JS",
       icon: ReactLogo,
       description:
-        "Para aplicaciones web ultrarr├ípidas, interactivas y con experiencias de usuario de vanguardia.",
+        "Para aplicaciones web ultrarrápidas, interactivas y con experiencias de usuario de vanguardia.",
       color: "from-cyan-400 to-blue-600",
     },
   ];

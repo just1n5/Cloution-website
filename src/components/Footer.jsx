@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Mail, 
@@ -6,9 +6,7 @@ import {
   MapPin, 
   Facebook, 
   Twitter, 
-  Linkedin, 
   Instagram,
-  Github,
   Heart,
   ExternalLink,
   X,
@@ -106,24 +104,12 @@ const Footer = () => {
   const footerLinks = {
     nosotros: [
       { name: 'Sobre Cloution', href: '#nosotros' },
-      { name: 'Equipo', href: '#equipo' },
-      { name: 'Carreras', href: '#carreras' },
-      { name: 'Blog', href: '#blog' },
       { name: 'Casos de Éxito', href: '#casos' },
     ],
     servicios: [
       { name: 'Pulse Monitor', href: '#pulse' },
       { name: 'Lexia AI', href: '#lexia' },
-      { name: 'DataVault', href: '#datavault' },
-      { name: 'CloudForge', href: '#cloudforge' },
-      { name: 'Consultoría', href: '#consultoria' },
-    ],
-    recursos: [
-      { name: 'Documentación', href: '#docs' },
-      { name: 'API Reference', href: '#api' },
-      { name: 'Guías', href: '#guias' },
-      { name: 'Webinars', href: '#webinars' },
-      { name: 'Certificaciones', href: '#certificaciones' },
+      { name: 'NexoPOS', href: '#datavault' },
     ],
     legal: [
       { name: 'Términos de Servicio', href: termsPdf, type: 'pdf' },
@@ -135,11 +121,21 @@ const Footer = () => {
   }
 
   const socialLinks = [
-    { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
-    { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
-    { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-    { icon: Github, href: 'https://github.com', label: 'GitHub' },
+    {
+      icon: Facebook,
+      href: 'https://www.facebook.com/profile.php?id=61581072004457',
+      label: 'Facebook'
+    },
+    {
+      icon: Instagram,
+      href: 'https://www.instagram.com/cloutionsas/',
+      label: 'Instagram'
+    },
+    {
+      icon: Twitter,
+      href: 'https://x.com/Cloutionsas',
+      label: 'X (Twitter)'
+    }
   ]
 
   const handleLinkClick = (e, href) => {
@@ -159,7 +155,7 @@ const Footer = () => {
       <footer id="contacto" className="relative pt-20 pb-10 border-t border-white/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Company Info */}
           <div className="lg:col-span-2">
             <motion.div
@@ -206,7 +202,7 @@ const Footer = () => {
           </div>
 
           {/* Links Sections */}
-          <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Nosotros */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -254,33 +250,11 @@ const Footer = () => {
               </ul>
             </motion.div>
 
-            {/* Recursos */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <h3 className="font-semibold text-white mb-4">Recursos</h3>
-              <ul className="space-y-2">
-                {footerLinks.recursos.map((link) => (
-                  <li key={link.name}>
-                    <a
-                      href={link.href}
-                      onClick={(e) => handleLinkClick(e, link.href)}
-                      className="text-sm text-gray-400 hover:text-neon-blue transition-colors"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
             {/* Legal */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               <h3 className="font-semibold text-white mb-4">Legal</h3>
               <ul className="space-y-2">
@@ -307,38 +281,8 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="py-8 mb-8 border-y border-white/10"
-        >
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Suscríbete a nuestro Newsletter
-              </h3>
-              <p className="text-gray-400">
-                Recibe las últimas novedades en tecnología y transformación digital
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <input
-                type="email"
-                placeholder="tu@email.com"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-neon-blue transition-colors"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-primary"
-              >
-                Suscribirse
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
+        {/* Divider sustituyendo al formulario */}
+        <div className="border-t border-white/10 my-8" />
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">

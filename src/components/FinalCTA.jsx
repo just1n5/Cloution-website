@@ -8,6 +8,7 @@ import {
   Award,
   Star,
   CheckCircle,
+  MessageCircle,
 } from "lucide-react";
 
 const FinalCTA = () => {
@@ -111,13 +112,17 @@ const FinalCTA = () => {
                     transition={{ delay: 0.4 }}
                     className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
                   >
-                    <motion.button
+                    <motion.a
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      href="https://wa.me/+573219984290"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="group relative btn-primary px-8 py-4 text-lg overflow-hidden"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        Agendar Consultoría Gratuita
+                        <MessageCircle className="w-5 h-5" />
+                        Conecta con uno de nuestros asesores
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </span>
                       <motion.div
@@ -126,16 +131,17 @@ const FinalCTA = () => {
                         whileHover={{ x: 0 }}
                         transition={{ duration: 0.3 }}
                       />
-                    </motion.button>
+                    </motion.a>
 
-                    <motion.button
+                    <motion.a
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      href="/portafolio-web"
                       className="btn-secondary px-8 py-4 text-lg flex items-center gap-2"
                     >
                       <Rocket className="w-5 h-5" />
                       Ver Casos de Éxito
-                    </motion.button>
+                    </motion.a>
                   </motion.div>
 
                   {/* Trust Badges */}

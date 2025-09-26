@@ -180,14 +180,16 @@ const Header = () => {
               )
             })}
             
-            <motion.button
+            <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn-primary"
-              onClick={() => navigate('/#contacto')}
+              href="https://wa.me/+573219984290"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Comenzar Ahora
-            </motion.button>
+            </motion.a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -249,17 +251,17 @@ const Header = () => {
                     </motion.a>
                   )
                 })}
-                <motion.button
+                <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="btn-primary w-full"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    navigate('/#contacto')
-                  }}
+                  className="btn-primary w-full text-center"
+                  href="https://wa.me/+573219984290"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Comenzar Ahora
-                </motion.button>
+                </motion.a>
               </div>
             </motion.div>
           )}

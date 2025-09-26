@@ -225,19 +225,22 @@ const Hero = () => {
             className="flex flex-col items-center"
           >
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-4">
-              <motion.button
+              <motion.a
                 whileHover={{
                   scale: 1.05,
                   boxShadow: "0 20px 40px rgba(37, 99, 235, 0.3)",
                 }}
                 whileTap={{ scale: 0.95 }}
+                href="https://wa.me/+573219984290"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-primary group flex items-center gap-2 px-8 py-4 text-lg font-semibold"
               >
                 Comenzar Ahora
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
+              </motion.a>
 
-              <motion.button
+              <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="btn-secondary group flex items-center gap-2 px-8 py-4 text-lg font-semibold border-gradient"
@@ -247,10 +250,11 @@ const Hero = () => {
                   borderImage:
                     "linear-gradient(135deg, #2563eb, #8b5cf6, #14b8a6) 1",
                 }}
+                href="#servicios"
               >
                 <Rocket className="w-5 h-5" />
                 Explorar Servicios
-              </motion.button>
+              </motion.a>
             </div>
 
             {/* Micro-copy */}
