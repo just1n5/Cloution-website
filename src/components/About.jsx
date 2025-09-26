@@ -1,42 +1,144 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Users, Target, Lightbulb, TrendingUp, Brain, Cloud, Code2, MonitorSmartphone, Server, Sparkles, Shield } from "lucide-react";
+import {
+  Users,
+  Target,
+  Lightbulb,
+  TrendingUp,
+  Brain,
+  Cloud,
+  Code2,
+  MonitorSmartphone,
+  Server,
+  Sparkles,
+  Shield,
+} from "lucide-react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars, Html, Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
-import { EffectComposer, RenderPass, EffectPass, BloomEffect } from "postprocessing";
+import {
+  EffectComposer,
+  RenderPass,
+  EffectPass,
+  BloomEffect,
+} from "postprocessing";
 
+// Importar los iconos 3D reales
+import AiDataIcon3D from "../icons/AiDataIcon3D";
+import CloudDevOpsIcon3D from "../icons/CloudDevOpsIcon3D";
+import SecurityIcon3D from "../icons/SecurityIcon3D";
+import FrontendIcon3D from "../icons/FrontendIcon3D";
+import BackendIcon3D from "../icons/BackendIcon3D";
+import UxUiIcon3D from "../icons/UxUiIcon3D";
+import ApisAutomationIcon3D from "../icons/ApisAutomationIcon3D";
 
-// 3D Solar System data
+// 3D Solar System data con mapeo a iconos 3D reales
 const PLANETS = [
-  { id: "ai", label: "AI & Data", radius: 8.5, speed: 0.35, color: "#7C6FF0" },
-  { id: "cloud", label: "Cloud & DevOps", radius: 10.5, speed: 0.26, color: "#3BA3FF" },
-  { id: "apis", label: "APIs & Automatización", radius: 12.5, speed: 0.30, color: "#5CE1E6", ring: true },
-  { id: "ux", label: "UX / UI", radius: 7.0, speed: 0.42, color: "#2EE6C5" },
-  { id: "be", label: "Backend", radius: 6.0, speed: 0.55, color: "#93A5FD" },
-  { id: "fe", label: "Frontend", radius: 6.9, speed: 0.58, color: "#9AE6FF" },
-  { id: "sec", label: "Seguridad", radius: 9.3, speed: 0.22, color: "#3D5A80", halo: true },
+  {
+    id: "ai",
+    label: "AI & Data",
+    radius: 8.5,
+    speed: 0.35,
+    color: "#8B5CF6",
+    Icon3D: AiDataIcon3D,
+  },
+  {
+    id: "cloud",
+    label: "Cloud & DevOps",
+    radius: 10.5,
+    speed: 0.26,
+    color: "#3BA3FF",
+    Icon3D: CloudDevOpsIcon3D,
+  },
+  {
+    id: "apis",
+    label: "APIs & Automatización",
+    radius: 12.5,
+    speed: 0.3,
+    color: "#F97316",
+    ring: true,
+    Icon3D: ApisAutomationIcon3D,
+  },
+  {
+    id: "ux",
+    label: "UX / UI",
+    radius: 7.5,
+    speed: 0.42,
+    color: "#EC4899",
+    Icon3D: UxUiIcon3D,
+  },
+  {
+    id: "be",
+    label: "Backend",
+    radius: 5.5,
+    speed: 0.55,
+    color: "#10B981",
+    Icon3D: BackendIcon3D,
+  },
+  {
+    id: "fe",
+    label: "Frontend",
+    radius: 6.5,
+    speed: 0.58,
+    color: "#60A5FA",
+    Icon3D: FrontendIcon3D,
+  },
+  {
+    id: "sec",
+    label: "Seguridad",
+    radius: 9.5,
+    speed: 0.22,
+    color: "#EF4444",
+    halo: true,
+    Icon3D: SecurityIcon3D,
+  },
 ];
 
 const CAPABILITY_INFO = {
   ai: {
-    desc: "Automatizamos y asistimos decisiones con modelos de IA aplicados al negocio.",
-    example: "Bot de soporte 24/7 y dashboard inteligente.",
-    tech: ["OpenAI", "Python", "Node", "PostgreSQL"],
-    bullets: ["Modelos aplicados al negocio", "Automatización inteligente"],
+    desc: "Modelos de IA predictivos para decisiones asistidas y automatización estratégica.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Implementación de bots conversacionales 24/7 y dashboards con analítica predictiva.",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
+    tech: [
+      "OpenAI (o LLMs)",
+      "Python (TensorFlow/PyTorch)",
+      "Node.js",
+      "PostgreSQL",
+    ],
+    bullets: [
+      "Modelos de Machine Learning entrenados con tus datos de negocio.",
+      "Sistemas de recomendación y forecasting automatizado.",
+    ],
   },
   cloud: {
-    desc: "Despliegues seguros y escalables con monitoreo y CI/CD.",
-    example: "Migración a AWS con ambientes por etapa.",
+    desc: "Despliegues seguros y escalables. Monitoreo automatizado y orquestación CI/CD.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Migración orquestada a AWS con ambientes segregados (Dev/QA/Prod).",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
     tech: ["AWS", "Docker", "GitHub Actions"],
-    bullets: ["Infraestructura escalable", "Pipelines CI/CD"],
+    bullets: [
+      "Arquitectura cloud-native optimizada y adaptable.",
+      "Automatización completa con Pipelines CI/CD.",
+    ],
   },
   apis: {
-    desc: "Integraciones con CRMs/ERPs y orquestación de procesos.",
-    example: "n8n + WhatsApp para agendamiento automático.",
-    tech: ["REST", "Webhooks", "n8n"],
-    bullets: ["Integraciones seguras", "Automatización de flujos"],
+    desc: "Orquestación de procesos críticos y flujos de trabajo inteligentes.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Flujos de automatización para CRMs/ERPs, como agendamiento automático vía WhatsApp (utilizando n8n).",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
+    tech: ["REST API", "Webhooks", "n8n (Orquestación)", "JSON"],
+    bullets: [
+      "APIs y Webhooks para integraciones seguras en tiempo real.",
+      "Automatización de procesos empresariales (BPM) sin code-debt.",
+    ],
   },
   ux: {
     desc: "Diseño centrado en el usuario y design system consistente.",
@@ -45,22 +147,44 @@ const CAPABILITY_INFO = {
     bullets: ["Accesibilidad", "Diseño consistente"],
   },
   be: {
-    desc: "Servicios confiables y mantenibles.",
-    example: "APIs Node con autenticación y caché.",
-    tech: ["Node", "Express", "JWT", "Redis"],
-    bullets: ["Arquitectura modular", "Observabilidad"],
+    desc: "Infraestructura modular, escalable y optimizada para el rendimiento.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Diseño e implementación de APIs en Node, con autenticación segura y estrategias avanzadas de caché.",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
+    tech: ["Node.js", "Express.js", "JWT", "Redis"],
+    bullets: [
+      "Arquitectura desacoplada y modular (fácil de escalar y mantener).",
+      "Sistemas de observabilidad para monitoreo proactivo de performance.",
+    ],
   },
   fe: {
-    desc: "Interfaces modernas y accesibles orientadas a conversión.",
-    example: "SPA en React con performance optimizada.",
-    tech: ["React", "Vite", "Tailwind"],
-    bullets: ["UI rápida", "Mejor conversión"],
+    desc: "Experiencias de usuario de vanguardia, optimizadas para rendimiento y conversión.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Desarrollo de SPA (Single Page Applications) en React con performance superior y arquitectura CLS-Free.",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
+    tech: ["React", "Vite", "Tailwind CSS"],
+    bullets: [
+      "Velocidad de carga extrema (gracias a Vite).",
+      "Diseño UX/UI centrado en la conversión y la accesibilidad.",
+    ],
   },
   sec: {
-    desc: "Buenas prácticas y cumplimiento.",
-    example: "Cifrado en tránsito y en reposo.",
-    tech: ["TLS", "OWASP"],
-    bullets: ["OWASP", "Hardening"],
+    desc: "Protección integral, cumplimiento normativo y enfoque proactivo.",
+    exampleTitle: "CASO DE USO CLAVE",
+    example:
+      "Implementación de cifrado de extremo a extremo, garantizando la confidencialidad de tus datos.",
+    valueTitle: "VALOR INMEDIATO",
+    techTitle: "TECNOLOGÍA BASE",
+    tech: ["TLS", "WAF", "Pruebas de Penetración"],
+    bullets: [
+      "Defensa activa contra vulnerabilidades (OWASP).",
+      "Arquitectura de infraestructura reforzada (Hardening).",
+      "Monitoreo continuo y gestión de accesos.",
+    ],
   },
 };
 
@@ -81,7 +205,14 @@ function useRadialGlowTexture() {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext("2d");
-    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    const g = ctx.createRadialGradient(
+      size / 2,
+      size / 2,
+      0,
+      size / 2,
+      size / 2,
+      size / 2
+    );
     g.addColorStop(0, "rgba(179,140,255,0.55)");
     g.addColorStop(1, "rgba(179,140,255,0)");
     ctx.fillStyle = g;
@@ -101,7 +232,11 @@ function Effects({ enabled = true, visible = true }) {
     const comp = new EffectComposer(gl);
     comp.multisampling = 2;
     const renderPass = new RenderPass(scene, camera);
-    const bloom = new BloomEffect({ intensity: 0.25, luminanceThreshold: 0.2, luminanceSmoothing: 0.025 });
+    const bloom = new BloomEffect({
+      intensity: 0.25,
+      luminanceThreshold: 0.2,
+      luminanceSmoothing: 0.025,
+    });
     const effects = new EffectPass(camera, bloom);
     comp.addPass(renderPass);
     comp.addPass(effects);
@@ -113,7 +248,8 @@ function Effects({ enabled = true, visible = true }) {
     };
   }, [gl, scene, camera, size, enabled]);
   useEffect(() => {
-    if (composer.current && enabled) composer.current.setSize(size.width, size.height);
+    if (composer.current && enabled)
+      composer.current.setSize(size.width, size.height);
   }, [size, enabled]);
   useFrame((_, delta) => {
     if (enabled && visible && composer.current) composer.current.render(delta);
@@ -178,12 +314,26 @@ const Orbit = ({ radius, highlighted }) => {
   return (
     <mesh rotation-x={-Math.PI / 2}>
       <ringGeometry args={[radius - 0.02, radius + 0.02, 64]} />
-      <meshBasicMaterial color={highlighted ? "#93a5fd" : "#ffffff"} transparent opacity={highlighted ? 0.35 : 0.15} side={THREE.DoubleSide} />
+      <meshBasicMaterial
+        color={highlighted ? "#93a5fd" : "#ffffff"}
+        transparent
+        opacity={highlighted ? 0.35 : 0.15}
+        side={THREE.DoubleSide}
+      />
     </mesh>
   );
 };
 
-const Planet = ({ data, reduced, hoveredId, setHoveredId, onActivate, registerRef, visible }) => {
+const Planet = ({
+  data,
+  reduced,
+  hoveredId,
+  setHoveredId,
+  onActivate,
+  registerRef,
+  visible,
+  activeId,
+}) => {
   const { radius, speed, color, id, label } = data;
   const group = useRef();
   const modelRef = useRef();
@@ -193,6 +343,7 @@ const Planet = ({ data, reduced, hoveredId, setHoveredId, onActivate, registerRe
   const [distanceFactor, setDistanceFactor] = useState(8);
   const { camera } = useThree();
   const tooltipId = `tt-${id}`;
+  const isActive = activeId === id;
 
   useEffect(() => {
     registerRef?.(id, group);
@@ -223,42 +374,90 @@ const Planet = ({ data, reduced, hoveredId, setHoveredId, onActivate, registerRe
 
   return (
     <group ref={group}>
-      {/* click/hover collider */}
+      {/* Collider invisible para interacción - usando raycast only */}
       <mesh
-        onPointerOver={() => {
+        onPointerOver={(e) => {
+          e.stopPropagation();
           setHovered(true);
           setHoveredId(id);
         }}
-        onPointerOut={() => {
+        onPointerOut={(e) => {
+          e.stopPropagation();
           setHovered(false);
           setHoveredId(null);
         }}
-        onClick={() => onActivate(id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onActivate(id);
+        }}
       >
-        <sphereGeometry args={[1.2, 8, 8]} />
-        <meshBasicMaterial transparent opacity={0} />
+        <sphereGeometry args={[1.2, 16, 16]} />
+        <meshBasicMaterial
+          transparent
+          opacity={0}
+          depthWrite={false}
+          alphaTest={1}
+          side={THREE.DoubleSide}
+        />
       </mesh>
+
       {/* visible planet: 3D icon model */}
-      <group ref={modelRef} scale={hovered || hoveredId === id ? 1.15 : 1}>
-        <PlanetContent id={id} color={color} />
+      <group
+        ref={modelRef}
+        scale={isActive ? 1.25 : hovered || hoveredId === id ? 1.12 : 1}
+      >
+        <Suspense
+          fallback={
+            <mesh>
+              <sphereGeometry args={[1, 16, 16]} />
+              <meshBasicMaterial color={color} />
+            </mesh>
+          }
+        >
+          {data.Icon3D && (
+            <data.Icon3D
+              color={color}
+              emissive={id === "sec" ? color : undefined}
+              emissiveIntensity={id === "sec" ? 0.3 : 0}
+              rotationSpeed={0.15}
+              scale={0.96}
+            />
+          )}
+        </Suspense>
       </group>
       {/* saturn-like ring */}
       {data.ring && (
         <mesh rotation-x={-Math.PI / 3}>
           <ringGeometry args={[1.1, 1.5, 48]} />
-          <meshBasicMaterial color={color} transparent opacity={0.35} blending={THREE.AdditiveBlending} side={THREE.DoubleSide} />
+          <meshBasicMaterial
+            color={color}
+            transparent
+            opacity={isActive ? 0.6 : hovered || hoveredId === id ? 0.45 : 0.35}
+            blending={THREE.AdditiveBlending}
+            side={THREE.DoubleSide}
+          />
         </mesh>
       )}
-      {/* halo/shield */}
-      {data.halo && (
+      {/* halo/shield - solo para seguridad */}
+      {data.halo && id === "sec" && (
         <mesh>
-          <sphereGeometry args={[1.3, 16, 16]} />
-          <meshBasicMaterial color={color} transparent opacity={0.12} />
+          <sphereGeometry args={[1.5, 16, 16]} />
+          <meshBasicMaterial
+            color={color}
+            transparent
+            opacity={isActive ? 0.18 : 0.08}
+            side={THREE.DoubleSide}
+          />
         </mesh>
       )}
       {/* Always-visible label */}
       <Billboard position={[0, 1.6, 0]}>
-        <Html center transform distanceFactor={distanceFactor} zIndexRange={[10, 0]}>
+        <Html
+          center
+          transform
+          distanceFactor={distanceFactor}
+          zIndexRange={[10, 0]}
+        >
           <button
             role="button"
             tabIndex={0}
@@ -273,12 +472,23 @@ const Planet = ({ data, reduced, hoveredId, setHoveredId, onActivate, registerRe
             onFocus={() => setHovered(true)}
             onBlur={() => setHovered(false)}
             className={`px-2 py-1 rounded-lg border backdrop-blur text-white/90 text-xs flex items-center gap-2 transition-colors ${
-              hovered || hoveredId === id ? "bg-white/20 border-white/30" : "bg-white/10 border-white/20 opacity-60"
+              isActive
+                ? "bg-neon-blue/30 border-neon-blue/40 shadow-[0_0_20px_rgba(59,163,255,0.35)]"
+                : hovered || hoveredId === id
+                ? "bg-white/20 border-white/30"
+                : "bg-white/10 border-white/20 opacity-60"
             }`}
           >
             {(() => {
               const Icon = ICONS[id];
-              return Icon ? <Icon className="w-3.5 h-3.5 text-white/90" /> : <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />;
+              return Icon ? (
+                <Icon className="w-3.5 h-3.5 text-white/90" />
+              ) : (
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+              );
             })()}
             <span className="font-medium">{label}</span>
           </button>
@@ -286,7 +496,13 @@ const Planet = ({ data, reduced, hoveredId, setHoveredId, onActivate, registerRe
       </Billboard>
       {/* Tooltip with one-line description, occluded if hidden */}
       <Billboard position={[0, 2.4, 0]}>
-        <Html center transform occlude distanceFactor={distanceFactor} zIndexRange={[20, 0]}>
+        <Html
+          center
+          transform
+          occlude
+          distanceFactor={distanceFactor}
+          zIndexRange={[20, 0]}
+        >
           <AnimatePresence>
             {(hovered || hoveredId === id) && (
               <motion.div
@@ -324,7 +540,11 @@ function PlanetContent({ id, color }) {
             [-0.4, 0.4].map((z) => (
               <mesh key={`pin-${x}-${z}`} position={[x, -0.25, z]}>
                 <cylinderGeometry args={[0.06, 0.06, 0.3, 16]} />
-                <meshStandardMaterial color="#cbd5e1" metalness={0.4} roughness={0.4} />
+                <meshStandardMaterial
+                  color="#cbd5e1"
+                  metalness={0.4}
+                  roughness={0.4}
+                />
               </mesh>
             ))
           )}
@@ -364,7 +584,10 @@ function PlanetContent({ id, color }) {
           {Array.from({ length: 6 }).map((_, i) => {
             const a = (i / 6) * Math.PI * 2;
             return (
-              <mesh key={i} position={[Math.cos(a) * 0.7, 0, Math.sin(a) * 0.7]}>
+              <mesh
+                key={i}
+                position={[Math.cos(a) * 0.7, 0, Math.sin(a) * 0.7]}
+              >
                 <sphereGeometry args={[0.12, 16, 16]} />
                 <meshStandardMaterial color="#ffffff" {...commonMat} />
               </mesh>
@@ -414,11 +637,21 @@ function PlanetContent({ id, color }) {
       // Frontend: layered plates
       return (
         <group>
-          <mesh castShadow receiveShadow position={[0, -0.1, 0]} rotation={[0.05, 0.2, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            position={[0, -0.1, 0]}
+            rotation={[0.05, 0.2, 0]}
+          >
             <boxGeometry args={[1.1, 0.18, 0.9]} />
             <meshStandardMaterial color={color} {...commonMat} />
           </mesh>
-          <mesh castShadow receiveShadow position={[0.05, 0.22, 0.05]} rotation={[-0.05, -0.15, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            position={[0.05, 0.22, 0.05]}
+            rotation={[-0.05, -0.15, 0]}
+          >
             <boxGeometry args={[1.0, 0.16, 0.8]} />
             <meshStandardMaterial color="#ffffff" {...commonMat} />
           </mesh>
@@ -457,17 +690,37 @@ function ShieldMesh({ color = "#3D5A80" }) {
   );
 }
 
-const SolarSystem = ({ reduced, activeId, setActiveId, registerRef, visible }) => {
+const SolarSystem = ({
+  reduced,
+  activeId,
+  setActiveId,
+  registerRef,
+  visible,
+}) => {
   const [hoveredId, setHoveredId] = useState(null);
 
   return (
     <group rotation-x={-0.26}>
       <Sun />
       {PLANETS.map((p) => (
-        <Orbit key={`orbit-${p.id}`} radius={p.radius} highlighted={hoveredId === p.id || activeId === p.id} />
+        <Orbit
+          key={`orbit-${p.id}`}
+          radius={p.radius}
+          highlighted={hoveredId === p.id || activeId === p.id}
+        />
       ))}
       {PLANETS.map((p) => (
-        <Planet key={p.id} data={p} reduced={reduced} hoveredId={hoveredId} setHoveredId={setHoveredId} onActivate={setActiveId} registerRef={registerRef} visible={visible} />
+        <Planet
+          key={p.id}
+          data={p}
+          reduced={reduced}
+          hoveredId={hoveredId}
+          setHoveredId={setHoveredId}
+          onActivate={setActiveId}
+          registerRef={registerRef}
+          visible={visible}
+          activeId={activeId}
+        />
       ))}
     </group>
   );
@@ -489,18 +742,36 @@ const CameraRig = ({ activeId, getPlanetRef, shouldReduceMotion }) => {
     if (current) {
       const target = current.getWorldPosition(new THREE.Vector3());
       const dir = camera.position.clone().sub(target).normalize();
-      const desired = target.clone().add(dir.multiplyScalar(6)).add(new THREE.Vector3(0, 1.8, 0));
+      const desired = target
+        .clone()
+        .add(dir.multiplyScalar(6))
+        .add(new THREE.Vector3(0, 1.8, 0));
       camera.position.lerp(desired, Math.min(1, delta * 2));
       controls.current?.target.lerp(target, Math.min(1, delta * 2));
       controls.current?.update();
     }
   });
-  return <OrbitControls ref={controls} enablePan={false} minDistance={14} maxDistance={36} minPolarAngle={Math.PI / 4} maxPolarAngle={(3 * Math.PI) / 5} autoRotate={!activeId && !shouldReduceMotion} autoRotateSpeed={0.12} args={[camera, gl.domElement]} />;
+  return (
+    <OrbitControls
+      ref={controls}
+      enablePan={false}
+      minDistance={14}
+      maxDistance={36}
+      minPolarAngle={Math.PI / 4}
+      maxPolarAngle={(3 * Math.PI) / 5}
+      autoRotate={!activeId && !shouldReduceMotion}
+      autoRotateSpeed={0.12}
+      args={[camera, gl.domElement]}
+    />
+  );
 };
 
 const CapabilityPanel = ({ activeId, onClose }) => {
   const data = PLANETS.find((p) => p.id === activeId);
   const info = activeId ? CAPABILITY_INFO[activeId] : null;
+  const exampleHeading = info?.exampleTitle || "Ejemplo aplicado";
+  const valueHeading = info?.valueTitle || "¿Qué entregamos?";
+  const techHeading = info?.techTitle || "Stack técnico";
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
@@ -510,22 +781,95 @@ const CapabilityPanel = ({ activeId, onClose }) => {
   }, [onClose]);
   if (!data || !info) return null;
   return (
-    <div className="absolute inset-0 z-20">
-      <div className="absolute inset-0" onClick={onClose} />
-      <div className="absolute right-4 top-4 bottom-4 w-[min(22rem,90%)] glass-effect border border-white/10 rounded-xl p-4 overflow-auto bg-slate-900/70 backdrop-blur">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <div className="text-white font-semibold">{data.label}</div>
-            <div className="text-white/70 text-sm">{info.desc}</div>
+    <motion.aside
+      initial={{ x: 160, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 160, opacity: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="relative flex h-full w-full flex-col border-t border-white/5 bg-slate-950/95 backdrop-blur-2xl shadow-[0_0_40px_rgba(15,23,42,0.6)] lg:w-[55%] xl:w-[50%]"
+    >
+      <div className="flex h-full flex-col overflow-y-auto px-6 py-7 sm:px-8 lg:px-12">
+        <header className="flex items-start gap-3 border-b border-white/10 pb-6">
+          <div className="flex items-start gap-3">
+            <span
+              className="mt-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full"
+              style={{ backgroundColor: data.color }}
+            />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-neon-blue/70">
+                Capability
+              </p>
+              <h2 className="text-2xl font-bold text-white">{data.label}</h2>
+              <p className="mt-2 text-sm text-white/70 leading-relaxed">{info.desc}</p>
+            </div>
           </div>
-          <button onClick={onClose} className="px-2 py-1 text-sm rounded-md bg-white/10 border border-white/10 text-white hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue">
-            Cerrar
-          </button>
+        </header>
+
+        <div className="flex-1 space-y-6 py-6">
+          <section>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60">
+              {exampleHeading}
+            </h3>
+            <p className="mt-2 text-base text-white/80 leading-relaxed">
+              {info.example}
+            </p>
+          </section>
+
+          {info.bullets?.length ? (
+            <section>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60">
+                {valueHeading}
+              </h3>
+              <ul className="mt-3 space-y-2">
+                {info.bullets.map((bullet, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/5/10 px-3 py-2 text-sm text-white/80 backdrop-blur"
+                  >
+                    <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-neon-blue" />
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {info.tech?.length ? (
+            <section>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60">
+                {techHeading}
+              </h3>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {info.tech.map((tech, idx) => (
+                  <span
+                    key={idx}
+                    className="rounded-md border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white/80"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
-        <div className="text-white/80 text-sm mb-2"><span className="text-neon-blue font-medium">Ejemplo:</span> {info.example}</div>
-        <div className="text-gray-300 text-xs">Tech: {info.tech?.join(", ")}</div>
+
+        <footer className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-white/50">
+            ¿Necesitas llevar este roadmap a tu equipo? Genera un reporte inmediato.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onClose}
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/70 transition-colors hover:border-neon-blue/50 hover:text-white"
+            >
+              Cerrar panel
+            </motion.button>
+          </div>
+        </footer>
       </div>
-    </div>
+    </motion.aside>
   );
 };
 
@@ -533,7 +877,8 @@ function useLowFpsOnMobile() {
   const [low, setLow] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const isMobile = window.matchMedia && window.matchMedia("(max-width: 767px)").matches;
+    const isMobile =
+      window.matchMedia && window.matchMedia("(max-width: 767px)").matches;
     if (!isMobile) return;
     let frames = 0;
     let start = performance.now();
@@ -556,7 +901,9 @@ function useLowFpsOnMobile() {
 }
 
 function usePageVisible() {
-  const [visible, setVisible] = useState(typeof document !== "undefined" ? !document.hidden : true);
+  const [visible, setVisible] = useState(
+    typeof document !== "undefined" ? !document.hidden : true
+  );
   useEffect(() => {
     const onVis = () => setVisible(!document.hidden);
     document.addEventListener("visibilitychange", onVis);
@@ -576,75 +923,223 @@ const SolarSystemCanvas = () => {
     refs.current[id] = ref;
   };
   const getPlanetRef = (id) => refs.current[id];
-  return (
-    <>
-    <div className="relative w-full h-96 rounded-2xl glass-effect p-8 overflow-hidden">
-      {!renderFallback && (
-        <Canvas shadows dpr={[1, 1.5]} camera={{ position: [0, 12, 22], fov: 42 }} onCreated={({ gl }) => {
-          gl.setClearColor("#000000", 0);
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-        }}>
-          <ambientLight intensity={0.3} />
-          <Stars radius={80} depth={40} count={2000} factor={4} saturation={0} fade speed={0.5} />
-          <SolarSystem reduced={shouldReduceMotion} activeId={activeId} setActiveId={setActiveId} registerRef={registerRef} visible={pageVisible} />
-          <CameraRig activeId={activeId} getPlanetRef={getPlanetRef} shouldReduceMotion={shouldReduceMotion} />
-          <Effects enabled={!shouldReduceMotion} visible={pageVisible} />
-        </Canvas>
-      )}
-      {renderFallback && (
-        <div className="absolute inset-0 p-2 overflow-auto">
-          <div className="grid grid-cols-2 gap-3">
-            {PLANETS.map((p) => {
-              const info = CAPABILITY_INFO[p.id];
-              return (
-                <div key={p.id} className="col-span-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveId(activeId === p.id ? null : p.id)}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl border backdrop-blur transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue ${
-                      activeId === p.id ? "bg-white/10 border-neon-blue/40" : "bg-white/5 border-white/10 hover:bg-white/10"
-                    }`}
-                  >
-                    <span className="text-sm text-white/90 font-medium">{p.label}</span>
-                    <span aria-hidden className="text-white/60 text-xs">{activeId === p.id ? "-" : "+"}</span>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {activeId === p.id && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: shouldReduceMotion ? 0 : 0.2 }} className="overflow-hidden">
-                        <div className="px-3 pt-2 pb-3 text-sm text-white/80">
-                          <div className="mb-1"><span className="font-semibold text-white">{p.label}:</span> {info.desc}</div>
-                          <div className="mb-1"><span className="text-neon-blue font-medium">Ejemplo:</span> {info.example}</div>
-                          <div className="text-xs text-gray-300">Tech: {info.tech.join(", ")}</div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
+  const handleClose = () => setActiveId(null);
+
+  const renderScene = (variant = "default") => {
+    const baseClasses =
+      variant === "split"
+        ? "relative h-full min-h-[60vh] w-full overflow-hidden glass-effect"
+        : "relative w-full h-96 overflow-hidden rounded-2xl glass-effect";
+    const paddingClasses = variant === "split" ? "p-6 sm:p-8 lg:p-10" : "p-8";
+    const borderClasses =
+      variant === "split"
+        ? "lg:rounded-l-3xl lg:border-r lg:border-white/10"
+        : "";
+
+    return (
+      <div className={`${baseClasses} ${paddingClasses} ${borderClasses}`}>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-900/35 via-slate-900/15 to-slate-900/35" />
+        <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-neon-blue/25 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="relative z-10 h-full w-full">
+          <Canvas
+            shadows
+            dpr={[1, 1.5]}
+            camera={{ position: [0, 12, 22], fov: 42 }}
+            onCreated={({ gl }) => {
+              gl.setClearColor("#000000", 0);
+              gl.toneMapping = THREE.ACESFilmicToneMapping;
+            }}
+          >
+            <ambientLight intensity={0.3} />
+            <Stars
+              radius={80}
+              depth={40}
+              count={2000}
+              factor={4}
+              saturation={0}
+              fade
+              speed={0.5}
+            />
+            <Suspense
+              fallback={
+                <group>
+                  <mesh>
+                    <sphereGeometry args={[2.5, 32, 32]} />
+                    <meshStandardMaterial
+                      color="#8B5CF6"
+                      emissive="#4338CA"
+                      emissiveIntensity={0.5}
+                    />
+                  </mesh>
+                  <pointLight position={[0, 0, 0]} intensity={2} />
+                </group>
+              }
+            >
+              <SolarSystem
+                reduced={shouldReduceMotion}
+                activeId={activeId}
+                setActiveId={setActiveId}
+                registerRef={registerRef}
+                visible={pageVisible}
+              />
+            </Suspense>
+            <CameraRig
+              activeId={activeId}
+              getPlanetRef={getPlanetRef}
+              shouldReduceMotion={shouldReduceMotion}
+            />
+            <Effects enabled={!shouldReduceMotion} visible={pageVisible} />
+          </Canvas>
+        </div>
+      </div>
+    );
+  };
+
+  if (renderFallback) {
+    return (
+      <>
+        <div className="relative w-full overflow-hidden rounded-2xl glass-effect p-6">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-900/30 via-slate-900/15 to-slate-900/35" />
+          <div className="relative z-10">
+            <div className="grid grid-cols-2 gap-3">
+              {PLANETS.map((p) => {
+                const info = CAPABILITY_INFO[p.id];
+                const isOpen = activeId === p.id;
+                return (
+                  <div key={p.id} className="col-span-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveId(isOpen ? null : p.id)}
+                      className={`w-full flex items-center justify-between gap-2 rounded-xl border px-3 py-2 backdrop-blur transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue ${
+                        isOpen
+                          ? "bg-white/10 border-neon-blue/40"
+                          : "bg-white/5 border-white/10 hover:bg-white/10"
+                      }`}
+                    >
+                      <span className="text-sm font-medium text-white/90">
+                        {p.label}
+                      </span>
+                      <span aria-hidden className="text-xs text-white/60">
+                        {isOpen ? "-" : "+"}
+                      </span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{
+                            duration: shouldReduceMotion ? 0 : 0.2,
+                          }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-3 pt-2 pb-3 text-sm text-white/80">
+                            <div className="mb-1">
+                              <span className="font-semibold text-white">
+                                {p.label}:
+                              </span>{" "}
+                              {info.desc}
+                            </div>
+                            <div className="mb-1">
+                              <span className="text-neon-blue font-medium">
+                                Ejemplo:
+                              </span>{" "}
+                              {info.example}
+                            </div>
+                            <div className="text-xs text-gray-300">
+                              Tech: {info.tech.join(", ")}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
-      <AnimatePresence>
-        {activeId && <CapabilityPanel activeId={activeId} onClose={() => setActiveId(null)} />}
+        <p className="mt-3 text-sm text-white/70">
+          Nuestro ecosistema combina IA, Cloud, APIs y diseño para crear
+          soluciones B2B escalables y confiables.
+        </p>
+        <div className="mt-2 text-center">
+          <a
+            href="/3d-icons-test"
+            className="inline-flex items-center gap-1 text-xs text-white/40 transition-colors hover:text-white/60"
+            title="Ver galería de iconos 3D"
+          >
+            <span>🔧</span>
+            <span className="underline">Explorar sistema de iconos 3D</span>
+          </a>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <AnimatePresence initial={false}>
+        {!activeId && (
+          <motion.div
+            key="solar-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            {renderScene("default")}
+          </motion.div>
+        )}
       </AnimatePresence>
-      {/* center label moved into 3D via Text in Sun */}
-    </div>
-    {/* Microcopy below canvas */}
-    <p className="mt-3 text-sm text-white/70">
-      Nuestro ecosistema combina IA, Cloud, APIs y diseño para crear soluciones B2B escalables y confiables.
-    </p>
-    {/* Enlace discreto para ver iconos 3D */}
-    <div className="mt-2 text-center">
-      <a 
-        href="/3d-icons-test" 
-        className="inline-flex items-center gap-1 text-xs text-white/40 hover:text-white/60 transition-colors"
-        title="Ver galería de iconos 3D"
-      >
-        <span>🔧</span>
-        <span className="underline">Explorar sistema de iconos 3D</span>
-      </a>
-    </div>
+
+      <AnimatePresence>
+        {activeId && (
+          <motion.div
+            key="solar-split"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[120] flex flex-col bg-slate-950/80 backdrop-blur-xl lg:flex-row"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) handleClose();
+            }}
+          >
+            <motion.div
+              initial={{ x: -60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -60, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="flex-1 lg:w-[45%] xl:w-[42%]"
+            >
+              {renderScene("split")}
+            </motion.div>
+            <CapabilityPanel activeId={activeId} onClose={handleClose} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!activeId && (
+        <>
+          <p className="mt-3 text-sm text-white/70">
+            Nuestro ecosistema combina IA, Cloud, APIs y diseño para crear
+            soluciones B2B escalables y confiables.
+          </p>
+          <div className="mt-2 text-center">
+            <a
+              href="/3d-icons-test"
+              className="inline-flex items-center gap-1 text-xs text-white/40 transition-colors hover:text-white/60"
+              title="Ver galería de iconos 3D"
+            >
+              <span>🔧</span>
+              <span className="underline">Explorar sistema de iconos 3D</span>
+            </a>
+          </div>
+        </>
+      )}
     </>
   );
 };
@@ -700,10 +1195,10 @@ const About = () => {
             </div>
 
             <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-              En Cloution, somos más que una consultora tecnológica. Somos
-              arquitectos del futuro digital, especializados en crear soluciones
-              B2B innovadoras que impulsan el crecimiento exponencial de las
-              empresas.
+              Transformamos tus desafíos digitales en oportunidades de negocio.
+              En Cloution, nuestro equipo de arquitectos digitales crea
+              soluciones B2B innovadoras y escalables para impulsar el
+              crecimiento de tu empresa.
             </p>
 
             <p className="text-gray-300 text-lg mb-8 leading-relaxed">

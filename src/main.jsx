@@ -25,7 +25,7 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-6xl font-bold text-white mb-4">404</h1>
-        <p className="text-xl text-gray-300 mb-8">Página no encontrada</p>
+        <p className="text-xl text-gray-300 mb-8">{'P\u00E1gina no encontrada'}</p>
         <a 
           href="/" 
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"

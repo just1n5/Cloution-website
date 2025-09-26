@@ -1,20 +1,26 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
-import { Rocket, ArrowRight, Shield, Award, Star, CheckCircle } from 'lucide-react'
+import React from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import {
+  Rocket,
+  ArrowRight,
+  Shield,
+  Award,
+  Star,
+  CheckCircle,
+} from "lucide-react";
 
 const FinalCTA = () => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
-  })
+  });
 
   const badges = [
-    { icon: Shield, text: 'ISO 27001' },
-    { icon: Award, text: 'Partner Microsoft' },
-    { icon: Star, text: 'Google Cloud' },
-    { icon: CheckCircle, text: 'AWS Advanced' },
-  ]
+    { icon: Award, text: "Microsoft Azure" },
+    { icon: Star, text: "Google Cloud" },
+    { icon: CheckCircle, text: "AWS" },
+  ];
 
   return (
     <section className="py-20 relative overflow-hidden">
@@ -54,7 +60,7 @@ const FinalCTA = () => {
             <div className="relative rounded-3xl overflow-hidden">
               {/* Gradient Background */}
               <div className="absolute inset-0 bg-gradient-to-r from-neon-blue via-neon-purple to-neon-teal opacity-10" />
-              
+
               {/* Glass Effect Container */}
               <div className="relative glass-effect border border-white/20 p-12 lg:p-16">
                 {/* Floating Rocket Animation */}
@@ -82,7 +88,9 @@ const FinalCTA = () => {
                   >
                     <h2 className="text-4xl lg:text-5xl font-bold mb-6">
                       ¿Preparado para
-                      <span className="block gradient-text mt-2">Transformar tu Negocio?</span>
+                      <span className="block gradient-text mt-2">
+                        Transformar tu Negocio?
+                      </span>
                     </h2>
                   </motion.div>
 
@@ -92,8 +100,8 @@ const FinalCTA = () => {
                     transition={{ delay: 0.3 }}
                     className="text-lg text-gray-300 mb-8"
                   >
-                    Únete a más de 500 empresas que ya confían en Cloution para 
-                    liderar su transformación digital. El futuro es ahora.
+                    Tu éxito es nuestro próximo caso de estudio. Hablemos de
+                    cómo llevar tu negocio al siguiente nivel.
                   </motion.p>
 
                   {/* CTA Buttons */}
@@ -114,7 +122,7 @@ const FinalCTA = () => {
                       </span>
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-neon-purple to-neon-blue"
-                        initial={{ x: '-100%' }}
+                        initial={{ x: "-100%" }}
                         whileHover={{ x: 0 }}
                         transition={{ duration: 0.3 }}
                       />
@@ -136,7 +144,10 @@ const FinalCTA = () => {
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.5 }}
                   >
-                    <p className="text-sm text-gray-400 mb-4">Certificaciones y Partners:</p>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Tu visión es nuestra hoja de ruta. Tu éxito, nuestra
+                      obsesión.
+                    </p>
                     <div className="flex flex-wrap justify-center gap-4">
                       {badges.map((badge, index) => (
                         <motion.div
@@ -148,7 +159,9 @@ const FinalCTA = () => {
                           className="flex items-center gap-2 px-4 py-2 rounded-lg glass-effect border border-white/10"
                         >
                           <badge.icon className="w-4 h-4 text-neon-blue" />
-                          <span className="text-sm text-gray-300">{badge.text}</span>
+                          <span className="text-sm text-gray-300">
+                            {badge.text}
+                          </span>
                         </motion.div>
                       ))}
                     </div>
@@ -163,7 +176,7 @@ const FinalCTA = () => {
                   >
                     <div className="w-2 h-2 bg-neon-blue rounded-full animate-pulse" />
                     <span className="text-sm text-neon-blue">
-                      3 espacios disponibles para consultoría este mes
+                      Agenda tu consultoría estratégica de cortesía.
                     </span>
                   </motion.div>
                 </div>
@@ -203,7 +216,7 @@ const FinalCTA = () => {
         </motion.div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default FinalCTA
+export default FinalCTA;

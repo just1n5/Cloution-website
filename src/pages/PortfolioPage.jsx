@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -17,8 +17,14 @@ import {
   Target,
   Brush,
   Rocket,
-  Shield
+  Shield,
+  Play,
+  Eye,
+  Award,
+  TrendingUp
 } from 'lucide-react';
+import { portfolioProjects, workProcess, portfolioStats } from '../data/portfolioData';
+import ProjectModal from '../components/ProjectModal';
 
 const PortfolioPage = () => {
   const [activeFilter, setActiveFilter] = useState('todos');
@@ -28,99 +34,32 @@ const PortfolioPage = () => {
     projectType: '',
     description: ''
   });
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [videoLoading, setVideoLoading] = useState({});
 
-  // Datos de proyectos simulados
-  const projects = [
-    {
-      id: 1,
-      slug: 'clinica-dental-sonrie',
-      name: 'Clínica Dental Sonríe',
-      category: ['wordpress', 'corporativo'],
-      image: '/api/placeholder/600/400',
-      technologies: ['WordPress', 'Elementor', 'MySQL'],
-      description: 'Plataforma integral con sistema de citas online'
-    },
-    {
-      id: 2,
-      slug: 'tienda-eco-verde',
-      name: 'EcoVerde Store',
-      category: ['react', 'ecommerce'],
-      image: '/api/placeholder/600/400',
-      technologies: ['React', 'Node.js', 'Stripe'],
-      description: 'E-commerce de productos sustentables'
-    },
-    {
-      id: 3,
-      slug: 'dashboard-analytics-pro',
-      name: 'Analytics Pro Dashboard',
-      category: ['react', 'corporativo'],
-      image: '/api/placeholder/600/400',
-      technologies: ['React', 'D3.js', 'Firebase'],
-      description: 'Dashboard de análisis en tiempo real'
-    },
-    {
-      id: 4,
-      slug: 'moda-boutique',
-      name: 'Moda Boutique',
-      category: ['wordpress', 'ecommerce'],
-      image: '/api/placeholder/600/400',
-      technologies: ['WordPress', 'WooCommerce', 'PayPal'],
-      description: 'Tienda online de alta costura'
-    },
-    {
-      id: 5,
-      slug: 'fintech-solutions',
-      name: 'FinTech Solutions',
-      category: ['react', 'corporativo'],
-      image: '/api/placeholder/600/400',
-      technologies: ['React', 'TypeScript', 'AWS'],
-      description: 'Portal financiero con blockchain'
-    },
-    {
-      id: 6,
-      slug: 'restaurante-gourmet',
-      name: 'Restaurante Gourmet',
-      category: ['wordpress', 'corporativo'],
-      image: '/api/placeholder/600/400',
-      technologies: ['WordPress', 'Custom Theme', 'OpenTable'],
-      description: 'Sitio con reservas y menú interactivo'
-    }
-  ];
+  // Usar los proyectos del archivo de datos
+  const projects = portfolioProjects;
 
+  // Filtros disponibles con iconos
   const filters = [
     { id: 'todos', label: 'Todos', icon: Globe },
     { id: 'wordpress', label: 'WordPress', icon: Globe },
-    { id: 'react', label: 'React JS', icon: Code2 },
     { id: 'ecommerce', label: 'E-commerce', icon: ShoppingCart },
-    { id: 'corporativo', label: 'Corporativo', icon: Building2 }
+    { id: 'corporativo', label: 'Corporativo', icon: Building2 },
+    { id: 'profesional', label: 'Profesional', icon: Shield },
+    { id: 'salud', label: 'Salud', icon: Shield },
+    { id: 'restaurante', label: 'Restaurante', icon: ShoppingCart },
+    { id: 'premium', label: 'Premium', icon: Award }
   ];
 
-  const processSteps = [
-    {
-      number: '01',
-      title: 'Estrategia y UX',
-      description: 'Análisis profundo de objetivos y usuarios',
-      icon: Target
-    },
-    {
-      number: '02',
-      title: 'Diseño UI y Prototipado',
-      description: 'Creación de interfaces atractivas y funcionales',
-      icon: Brush
-    },
-    {
-      number: '03',
-      title: 'Desarrollo y QA',
-      description: 'Programación con las mejores prácticas',
-      icon: Code2
-    },
-    {
-      number: '04',
-      title: 'Despliegue y Soporte',
-      description: 'Lanzamiento exitoso y mantenimiento continuo',
-      icon: Rocket
-    }
-  ];
+  // Usar el proceso del archivo de datos con iconos de Lucide
+  const processSteps = workProcess.map(step => ({
+    ...step,
+    icon: step.number === '01' ? Target : 
+          step.number === '02' ? Brush :
+          step.number === '03' ? Code2 : Rocket
+  }));
 
   const filteredProjects = projects.filter(project => {
     if (activeFilter === 'todos') return true;
@@ -133,22 +72,51 @@ const PortfolioPage = () => {
     // Aquí iría la lógica de envío del formulario
   };
 
+  const openProjectModal = (project) => {
+    setSelectedProject(project);
+    setShowProjectModal(true);
+  };
+
+  const closeProjectModal = () => {
+    setSelectedProject(null);
+    setShowProjectModal(false);
+  };
+
   // Project Card Component
   const ProjectCard = ({ project, index }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [showVideo, setShowVideo] = useState(false);
+    const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+    const handleCardClick = (e) => {
+      // Prevenir que el click abra el modal si es en un botón específico
+      if (e.target.closest('.no-modal-trigger')) {
+        return;
+      }
+      openProjectModal(project);
+    };
 
     return (
-      <motion.a
-        href={`/portafolio/${project.slug}`}
-        className="relative block group cursor-pointer"
+      <motion.div
+        className="relative group cursor-pointer"
         layout
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3, delay: index * 0.1 }}
         whileHover={{ y: -8 }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onClick={handleCardClick}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          if (project.video) {
+            setTimeout(() => setShowVideo(true), 300);
+          }
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setShowVideo(false);
+          setIsVideoLoaded(false);
+        }}
       >
         <motion.div 
           className="relative overflow-hidden rounded-xl bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
@@ -158,15 +126,59 @@ const PortfolioPage = () => {
               : '0 4px 20px rgba(0, 0, 0, 0.2)'
           }}
         >
-          {/* Imagen del proyecto */}
-          <div className="aspect-[4/3] overflow-hidden">
+          {/* Imagen del proyecto con responsive */}
+          <div className="aspect-[4/3] overflow-hidden relative">
+            {/* Video (si existe y hover) */}
+            {project.video && showVideo && (
+              <>
+                {!isVideoLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/50">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                )}
+                <video
+                  src={project.video}
+                  className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+                    isVideoLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onLoadedData={() => setIsVideoLoaded(true)}
+                />
+              </>
+            )}
+            
+            {/* Imagen por defecto */}
             <motion.img
-              src={project.image}
+              src={project.images.desktop}
               alt={project.name}
-              className="w-full h-full object-cover"
-              animate={{ scale: isHovered ? 1.1 : 1 }}
+              className="w-full h-full object-cover object-top"
+              animate={{ scale: isHovered && !showVideo ? 1.1 : 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
             />
+            
+            {/* Badge de año y tooltip */}
+            <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
+              <span className="text-white text-sm font-medium">{project.year}</span>
+            </div>
+            
+            {/* Indicador de Click (tooltip) */}
+            <motion.div
+              className="absolute top-4 left-4 px-3 py-1.5 bg-blue-500/90 backdrop-blur-sm rounded-lg"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ 
+                opacity: isHovered ? 1 : 0,
+                x: isHovered ? 0 : -20
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <span className="text-white text-xs font-medium flex items-center gap-1">
+                <Eye className="w-3 h-3" />
+                Click para ver detalles
+              </span>
+            </motion.div>
             
             {/* Overlay en hover */}
             <motion.div
@@ -189,7 +201,7 @@ const PortfolioPage = () => {
                 </motion.h3>
                 
                 <motion.p
-                  className="text-gray-300 mb-4"
+                  className="text-gray-300 mb-3"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ 
                     y: isHovered ? 0 : 20, 
@@ -200,9 +212,23 @@ const PortfolioPage = () => {
                   {project.description}
                 </motion.p>
                 
+                {/* Cliente y Resultado */}
+                <motion.div
+                  className="flex items-center gap-4 text-sm text-gray-400 mb-3"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ 
+                    y: isHovered ? 0 : 20, 
+                    opacity: isHovered ? 1 : 0 
+                  }}
+                  transition={{ duration: 0.3, delay: 0.25 }}
+                >
+                  <span>Cliente: {project.client}</span>
+                  <span className="text-green-400">✓ {project.result}</span>
+                </motion.div>
+                
                 {/* Tecnologías */}
                 <motion.div
-                  className="flex gap-2 mb-4"
+                  className="flex flex-wrap gap-2 mb-4"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ 
                     y: isHovered ? 0 : 20, 
@@ -210,7 +236,7 @@ const PortfolioPage = () => {
                   }}
                   transition={{ duration: 0.3, delay: 0.3 }}
                 >
-                  {project.technologies.map((tech, i) => (
+                  {project.technologies.slice(0, 3).map((tech, i) => (
                     <span 
                       key={i}
                       className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs text-blue-300"
@@ -218,31 +244,67 @@ const PortfolioPage = () => {
                       {tech}
                     </span>
                   ))}
+                  {project.technologies.length > 3 && (
+                    <span className="px-3 py-1 bg-gray-500/20 border border-gray-500/30 rounded-full text-xs text-gray-300">
+                      +{project.technologies.length - 3} más
+                    </span>
+                  )}
                 </motion.div>
                 
-                {/* Link de caso de estudio */}
+                {/* CTA Botón */}
                 <motion.div
-                  className="flex items-center gap-2 text-blue-400 font-semibold"
-                  initial={{ x: -20, opacity: 0 }}
+                  className="flex items-center justify-between"
+                  initial={{ y: 20, opacity: 0 }}
                   animate={{ 
-                    x: isHovered ? 0 : -20, 
+                    y: isHovered ? 0 : 20, 
                     opacity: isHovered ? 1 : 0 
                   }}
                   transition={{ duration: 0.3, delay: 0.4 }}
                 >
-                  Ver Caso de Estudio
-                  <ArrowRight className="w-4 h-4" />
+                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors">
+                    <Eye className="w-4 h-4" />
+                    Ver Detalles
+                  </button>
+                  {project.liveUrl && (
+                    <a 
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="no-modal-trigger flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Sitio en vivo
+                    </a>
+                  )}
                 </motion.div>
               </div>
             </motion.div>
           </div>
+          
+          {/* Información básica siempre visible */}
+          <div className="p-4 bg-slate-900/50">
+            <h4 className="text-lg font-semibold text-white mb-1">{project.name}</h4>
+            <p className="text-sm text-gray-400 mb-2">{project.client}</p>
+            <div className="flex items-center gap-2">
+              {project.features.slice(0, 2).map((feature, i) => (
+                <span key={i} className="text-xs text-gray-500">• {feature}</span>
+              ))}
+            </div>
+          </div>
         </motion.div>
-      </motion.a>
+      </motion.div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 relative overflow-x-hidden">
+      {/* Efectos de fondo decorativos */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-40 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+      </div>
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0">
@@ -315,13 +377,74 @@ const PortfolioPage = () => {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 border-t border-b border-slate-800">
+        <div className="container mx-auto px-4 lg:px-8">
+          <motion.div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="text-center">
+              <motion.div
+                className="text-4xl md:text-5xl font-bold text-white mb-2"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 100 }}
+              >
+                {portfolioStats.clientsServed}
+              </motion.div>
+              <p className="text-gray-400">Clientes Felices</p>
+            </div>
+            <div className="text-center">
+              <motion.div
+                className="text-4xl md:text-5xl font-bold text-white mb-2"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 100, delay: 0.1 }}
+              >
+                {portfolioStats.satisfactionRate}
+              </motion.div>
+              <p className="text-gray-400">Satisfacción</p>
+            </div>
+            <div className="text-center">
+              <motion.div
+                className="text-4xl md:text-5xl font-bold text-white mb-2"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 100, delay: 0.2 }}
+              >
+                {portfolioStats.averageIncrease}
+              </motion.div>
+              <p className="text-gray-400">Crecimiento Promedio</p>
+            </div>
+            <div className="text-center">
+              <motion.div
+                className="text-4xl md:text-5xl font-bold text-white mb-2"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 100, delay: 0.3 }}
+              >
+                {portfolioStats.yearsExperience}
+              </motion.div>
+              <p className="text-gray-400">Años de Experiencia</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Portfolio Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <AnimatePresence mode="wait">
             <motion.div 
               key={activeFilter}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid md:grid-cols-2 lg:grid-cols-2 gap-12"
               layout
             >
               {filteredProjects.map((project, index) => (
@@ -329,11 +452,21 @@ const PortfolioPage = () => {
               ))}
             </motion.div>
           </AnimatePresence>
+          
+          {filteredProjects.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-20"
+            >
+              <p className="text-gray-400 text-xl">No hay proyectos en esta categoría</p>
+            </motion.div>
+          )}
         </div>
       </section>
 
       {/* Proceso Section */}
-      <section className="py-20 relative">
+      <section className="py-20 relative overflow-hidden">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -343,54 +476,91 @@ const PortfolioPage = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Nuestro Proceso
+              Nuestro Proceso de Trabajo
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Metodología probada para entregar proyectos excepcionales
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {processSteps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="relative"
-                >
-                  {/* Línea conectora */}
-                  {index < processSteps.length - 1 && (
-                    <div className="hidden lg:block absolute top-16 left-full w-full h-[2px] bg-gradient-to-r from-blue-500/50 to-transparent -translate-x-4 z-0"></div>
-                  )}
-                  
-                  <motion.div 
-                    className="relative z-10 text-center lg:text-left"
-                    whileHover={{ y: -5 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
+          <div className="relative">
+            {/* Línea de conexión de fondo para desktop */}
+            <div className="hidden lg:block absolute top-16 left-[12.5%] right-[12.5%] h-[2px]">
+              <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+              {processSteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.15 }}
+                    className="relative"
                   >
-                    <motion.div
-                      className="w-32 h-32 mx-auto lg:mx-0 mb-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center"
-                      whileHover={{ 
-                        scale: 1.05,
-                        boxShadow: '0 20px 40px rgba(37, 99, 235, 0.3)'
-                      }}
-                    >
-                      <Icon className="w-12 h-12 text-blue-400" />
-                    </motion.div>
+                    {/* Línea vertical para móvil/tablet */}
+                    {index < processSteps.length - 1 && (
+                      <div className="block md:hidden absolute top-full left-1/2 transform -translate-x-1/2 w-[2px] h-8 bg-gradient-to-b from-blue-500/50 to-transparent"></div>
+                    )}
                     
-                    <div className="space-y-2">
-                      <span className="text-4xl font-bold text-blue-500/50">{step.number}</span>
-                      <h3 className="text-xl font-bold text-white">{step.title}</h3>
-                      <p className="text-gray-400">{step.description}</p>
-                    </div>
+                    <motion.div 
+                      className="relative text-center"
+                      whileHover={{ y: -5 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                    >
+                      {/* Número del paso */}
+                      <motion.div
+                        className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-6xl font-bold text-blue-500/10"
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                      >
+                        {step.number}
+                      </motion.div>
+
+                      {/* Icono container */}
+                      <motion.div
+                        className="relative w-32 h-32 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-blue-500/20 flex items-center justify-center group"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotate: 5,
+                          boxShadow: '0 25px 50px rgba(37, 99, 235, 0.4)'
+                        }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
+                        {/* Efecto de resplandor */}
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-xl group-hover:opacity-100 opacity-0 transition-opacity duration-300"></div>
+                        <Icon className="relative w-12 h-12 text-blue-400" />
+                        
+                        {/* Indicador de estado activo */}
+                        <motion.div
+                          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-500 rounded-full"
+                          animate={{ 
+                            scale: [1, 1.5, 1],
+                            opacity: [0.5, 1, 0.5]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: index * 0.2
+                          }}
+                        />
+                      </motion.div>
+                      
+                      {/* Contenido */}
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-bold text-white">{step.title}</h3>
+                        <p className="text-sm text-gray-400 px-4">{step.description}</p>
+                      </div>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -513,6 +683,14 @@ const PortfolioPage = () => {
           </motion.div>
         </div>
       </section>
+      {/* Project Modal */}
+      {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          isOpen={showProjectModal}
+          onClose={closeProjectModal}
+        />
+      )}
     </div>
   );
 };

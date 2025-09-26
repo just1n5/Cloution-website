@@ -1,5 +1,5 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Mail, 
   Phone, 
@@ -10,11 +10,98 @@ import {
   Instagram,
   Github,
   Heart,
-  ExternalLink
+  ExternalLink,
+  X,
+  Download
 } from 'lucide-react'
+import termsPdf from '../../legal_docs/T\u00E9rminos de Servicio de Cloution S.A.S..pdf?url'
+import privacyPdf from '../../legal_docs/Politica de privacidad.pdf?url'
+import cookiesPdf from '../../legal_docs/Politica de cookies.pdf?url'
+import securityPdf from '../../legal_docs/Pol\u00EDtica de Seguridad de Cloution.pdf?url'
+
+const LegalDocumentModal = ({ document, onClose }) => (
+  <AnimatePresence>
+    {document ? (
+      <motion.div
+        key={document.href}
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/80 backdrop-blur"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40, scale: 0.96 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          onClick={(event) => event.stopPropagation()}
+          className="w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 shadow-2xl"
+        >
+          <div className="flex items-start justify-between border-b border-white/10 px-6 py-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-neon-blue/70">
+                Legal
+              </p>
+              <h2 className="text-2xl font-bold text-white">{document.name}</h2>
+              <p className="mt-1 text-sm text-gray-400">
+                Revisa el documento en línea o descárgalo para consultarlo con tu equipo.
+              </p>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onClose}
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-gray-300 transition-colors hover:border-neon-blue/40 hover:text-white"
+              aria-label="Cerrar visor de documento"
+            >
+              <X className="h-5 w-5" />
+            </motion.button>
+          </div>
+
+          <div className="relative h-[60vh] bg-slate-950">
+            <iframe
+              src={document.href}
+              title={document.name}
+              className="h-full w-full"
+            />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950 to-transparent" />
+          </div>
+
+          <div className="flex flex-col items-start gap-4 border-t border-white/10 px-6 py-4 text-sm text-gray-400 md:flex-row md:items-center md:justify-between">
+            <p>Si la vista previa no carga correctamente, utiliza el botón de descarga.</p>
+            <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onClose}
+                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-neon-blue/40 hover:text-white md:w-auto"
+              >
+                Cerrar
+              </motion.button>
+              <motion.a
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                href={document.href}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-neon-blue/90 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-neon-blue/20 transition-colors hover:bg-neon-blue md:w-auto"
+              >
+                <Download className="h-4 w-4" />
+                Descargar PDF
+              </motion.a>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    ) : null}
+  </AnimatePresence>
+)
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const [selectedDocument, setSelectedDocument] = useState(null)
 
   const footerLinks = {
     nosotros: [
@@ -39,11 +126,11 @@ const Footer = () => {
       { name: 'Certificaciones', href: '#certificaciones' },
     ],
     legal: [
-      { name: 'Términos de Servicio', href: '#terminos' },
-      { name: 'Política de Privacidad', href: '#privacidad' },
-      { name: 'Cookies', href: '#cookies' },
+      { name: 'Términos de Servicio', href: termsPdf, type: 'pdf' },
+      { name: 'Política de Privacidad', href: privacyPdf, type: 'pdf' },
+      { name: 'Política de Cookies', href: cookiesPdf, type: 'pdf' },
+      { name: 'Política de Seguridad', href: securityPdf, type: 'pdf' },
       { name: 'SLA', href: '#sla' },
-      { name: 'Seguridad', href: '#seguridad' },
     ],
   }
 
@@ -65,8 +152,11 @@ const Footer = () => {
     }
   }
 
+  const closeModal = () => setSelectedDocument(null)
+
   return (
-    <footer id="contacto" className="relative pt-20 pb-10 border-t border-white/10">
+    <React.Fragment>
+      <footer id="contacto" className="relative pt-20 pb-10 border-t border-white/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
@@ -198,7 +288,14 @@ const Footer = () => {
                   <li key={link.name}>
                     <a
                       href={link.href}
-                      onClick={(e) => handleLinkClick(e, link.href)}
+                      onClick={(e) => {
+                        if (link.type === 'pdf') {
+                          e.preventDefault()
+                          setSelectedDocument(link)
+                        } else {
+                          handleLinkClick(e, link.href)
+                        }
+                      }}
                       className="text-sm text-gray-400 hover:text-neon-blue transition-colors"
                     >
                       {link.name}
@@ -284,7 +381,9 @@ const Footer = () => {
           </motion.div>
         </div>
       </div>
-    </footer>
+      </footer>
+      <LegalDocumentModal document={selectedDocument} onClose={closeModal} />
+    </React.Fragment>
   )
 }
 
