@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Formulario - Cloution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .test-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 500;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .test-results {
+            margin-top: 20px;
+        }
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .test-item .icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .test-item.success .icon { color: #28a745; }
+        .test-item.error .icon { color: #dc3545; }
+        .test-item.warning .icon { color: #ffc107; }
+        .test-item.info .icon { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test de Formulario - Cloution Portfolio</h1>
+        
+        <div class="test-section">
+            <h3>📝 Método 1: FormSubmit (Recomendado)</h3>
+            <p style="margin-bottom: 15px; color: #6c757d;">
+                Envía los datos directamente a tu email. Más confiable y sin problemas de CORS.
+            </p>
+            <form id="formsubmit-form">
+                <div class="form-group">
+                    <label for="fs-name">Nombre:</label>
+                    <input type="text" id="fs-name" name="name" required placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="fs-email">Email:</label>
+                    <input type="email" id="fs-email" name="email" required placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="fs-type">Tipo de Proyecto:</label>
+                    <select id="fs-type" name="projectType" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="wordpress">WordPress</option>
+                        <option value="react">React JS</option>
+                        <option value="unsure">No estoy seguro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fs-desc">Descripción:</label>
+                    <textarea id="fs-desc" name="description" required placeholder="Describe tu proyecto..."></textarea>
+                </div>
+                <button type="submit" class="btn" id="fs-submit">Enviar con FormSubmit</button>
+            </form>
+            <div id="formsubmit-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Método 2: Google Forms (Respaldo)</h3>
+            <p style="margin-bottom: 15px; color: #6c757d;">
+                Envía datos a Google Forms. Requiere configuración de IDs correctos.
+            </p>
+            <form id="google-form">
+                <div class="form-group">
+                    <label for="gf-name">Nombre:</label>
+                    <input type="text" id="gf-name" name="name" required placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="gf-email">Email:</label>
+                    <input type="email" id="gf-email" name="email" required placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="gf-type">Tipo de Proyecto:</label>
+                    <select id="gf-type" name="projectType" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="wordpress">WordPress</option>
+                        <option value="react">React JS</option>
+                        <option value="unsure">No estoy seguro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gf-desc">Descripción:</label>
+                    <textarea id="gf-desc" name="description" required placeholder="Describe tu proyecto..."></textarea>
+                </div>
+                <button type="submit" class="btn" id="gf-submit">Enviar a Google Forms</button>
+            </form>
+            <div id="google-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Estado de Configuración</h3>
+            <div class="test-results" id="config-status">
+                <div class="test-item info">
+                    <span class="icon">ℹ️</span>
+                    <span>Verificando configuración...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Instrucciones de Configuración</h3>
+            <ol style="color: #495057; line-height: 1.8;">
+                <li><strong>Para FormSubmit:</strong> 
+                    <ul style="margin-top: 5px;">
+                        <li>Reemplaza 'contacto@cloution.com' con tu email en el código</li>
+                        <li>La primera vez, verifica tu email con FormSubmit</li>
+                        <li>No requiere configuración adicional</li>
+                    </ul>
+                </li>
+                <li style="margin-top: 15px;"><strong>Para Google Forms:</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>Abre tu formulario: <a href="https://forms.gle/cQYQMFmVXEEZmRpU6" target="_blank">https://forms.gle/cQYQMFmVXEEZmRpU6</a></li>
+                        <li>Obtén el Form ID de la URL</li>
+                        <li>Inspecciona cada campo para obtener los entry IDs</li>
+                        <li>Actualiza los valores en el archivo PortfolioPage.jsx</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Configuración - ACTUALIZAR ESTOS VALORES
+        const FORMSUBMIT_EMAIL = 'contacto@cloution.com'; // CAMBIAR POR TU EMAIL
+        const GOOGLE_FORM_ID = '1FAIpQLSdNR8LdWXRiSNCdBj4iJacptpNQRXt4MfVXJTYq7HNpleclJA'; // CAMBIAR POR TU FORM ID
+        
+        // IDs de los campos de Google Forms - ACTUALIZAR ESTOS
+        const GOOGLE_FIELDS = {
+            name: 'entry.1077888602',
+            email: 'entry.1858443603',
+            projectType: 'entry.1817360050',
+            description: 'entry.1015762588'
+        };
+
+        // Verificar configuración
+        function checkConfig() {
+            const statusDiv = document.getElementById('config-status');
+            let html = '';
+
+            // Verificar FormSubmit
+            if (FORMSUBMIT_EMAIL === 'contacto@cloution.com') {
+                html += '<div class="test-item warning"><span class="icon">⚠️</span><span>FormSubmit: Necesitas cambiar el email de destino</span></div>';
+            } else {
+                html += '<div class="test-item success"><span class="icon">✅</span><span>FormSubmit: Configurado con ' + FORMSUBMIT_EMAIL + '</span></div>';
+            }
+
+            // Verificar Google Forms
+            if (GOOGLE_FORM_ID.includes('TU_FORM_ID')) {
+                html += '<div class="test-item error"><span class="icon">❌</span><span>Google Forms: Form ID no configurado</span></div>';
+            } else {
+                html += '<div class="test-item success"><span class="icon">✅</span><span>Google Forms: Form ID configurado</span></div>';
+            }
+
+            // Verificar Entry IDs
+            if (GOOGLE_FIELDS.name.includes('XXXX')) {
+                html += '<div class="test-item warning"><span class="icon">⚠️</span><span>Google Forms: Entry IDs necesitan actualización</span></div>';
+            } else {
+                html += '<div class="test-item info"><span class="icon">ℹ️</span><span>Google Forms: Entry IDs configurados (verificar que sean correctos)</span></div>';
+            }
+
+            statusDiv.innerHTML = html;
+        }
+
+        // FormSubmit handler
+        document.getElementById('formsubmit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('fs-submit');
+            const statusDiv = document.getElementById('formsubmit-status');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            
+            const formData = {
+                name: document.getElementById('fs-name').value,
+                email: document.getElementById('fs-email').value,
+                projectType: document.getElementById('fs-type').value,
+                description: document.getElementById('fs-desc').value,
+                _subject: 'Test desde Portfolio Cloution',
+                _template: 'table',
+                _captcha: false
+            };
+
+            try {
+                const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success || response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✅ ¡Formulario enviado correctamente! Revisa tu email.</div>';
+                    e.target.reset();
+                } else {
+                    throw new Error('Error en el envío');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ Error al enviar. Verifica el email de destino y que FormSubmit esté configurado.</div>';
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar con FormSubmit';
+            }
+        });
+
+        // Google Forms handler
+        document.getElementById('google-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('gf-submit');
+            const statusDiv = document.getElementById('google-status');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            
+            const formData = new FormData();
+            formData.append(GOOGLE_FIELDS.name, document.getElementById('gf-name').value);
+            formData.append(GOOGLE_FIELDS.email, document.getElementById('gf-email').value);
+            formData.append(GOOGLE_FIELDS.projectType, document.getElementById('gf-type').value);
+            formData.append(GOOGLE_FIELDS.description, document.getElementById('gf-desc').value);
+
+            try {
+                await fetch(`https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+                
+                // Con no-cors no podemos verificar la respuesta
+                statusDiv.innerHTML = '<div class="status info">📤 Formulario enviado (no se puede verificar con Google Forms). Revisa tu Google Form para confirmar.</div>';
+                e.target.reset();
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ Error al enviar. Verifica los IDs de los campos.</div>';
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar a Google Forms';
+            }
+        });
+
+        // Verificar configuración al cargar
+        checkConfig();
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+﻿diff --git a/src/pages/PortfolioPage.jsx b/src/pages/PortfolioPage.jsx
+--- a/src/pages/PortfolioPage.jsx
++++ b/src/pages/PortfolioPage.jsx
+@@
+-import ProjectModal from '../components/ProjectModal';
++import ProjectModal from '../components/ProjectModal';
++
++const INITIAL_FORM_DATA = {
++  name: '',
++  email: '',
++  projectType: '',
++  description: ''
++};
++
++const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdNR8LdWXRiSNCdBj4iJacptpNQRXt4MfVXJTYq7HNpleclJA/formResponse';
++
++const GOOGLE_FORM_FIELDS = {
++  name: 'entry.1077888602',
++  email: 'entry.1858443603',
++  projectType: 'entry.1817360050',
++  description: 'entry.1015762588'
++};
+ 
+ const PortfolioPage = () => {
+   const [activeFilter, setActiveFilter] = useState('todos');
+-  const [formData, setFormData] = useState({
+-    name: '',
+-    email: '',
+-    projectType: '',
+-    description: ''
+-  });
++  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+   const [selectedProject, setSelectedProject] = useState(null);
+   const [showProjectModal, setShowProjectModal] = useState(false);
+   const [videoLoading, setVideoLoading] = useState({});
++  const [isSubmitting, setIsSubmitting] = useState(false);
++  const [submitStatus, setSubmitStatus] = useState(null);
+@@
+-  const filteredProjects = projects.filter(project => {
+-    if (activeFilter === 'todos') return true;
+-    return project.category.includes(activeFilter);
+-  });
+-
+-  const handleSubmit = (e) => {
+-    e.preventDefault();
+-    console.log('Form submitted:', formData);
+-    // Aquí iría la lógica de envío del formulario
+-  };
++  const filteredProjects = projects.filter(project => {
++    if (activeFilter === 'todos') return true;
++    return project.category.includes(activeFilter);
++  });
++
++  useEffect(() => {
++    if (!submitStatus) return;
++    const timeout = setTimeout(() => setSubmitStatus(null), 5000);
++    return () => clearTimeout(timeout);
++  }, [submitStatus]);
++
++  const handleSubmit = async (e) => {
++    e.preventDefault();
++    if (isSubmitting) return;
++
++    setIsSubmitting(true);
++    setSubmitStatus(null);
++
++    const payload = new FormData();
++    payload.append(GOOGLE_FORM_FIELDS.name, formData.name);
++    payload.append(GOOGLE_FORM_FIELDS.email, formData.email);
++    payload.append(GOOGLE_FORM_FIELDS.projectType, formData.projectType);
++    payload.append(GOOGLE_FORM_FIELDS.description, formData.description);
++
++    try {
++      await fetch(GOOGLE_FORM_ACTION, {
++        method: 'POST',
++        mode: 'no-cors',
++        body: payload
++      });
++      setSubmitStatus('success');
++      setFormData({ ...INITIAL_FORM_DATA });
++    } catch (error) {
++      console.error('Error enviando formulario', error);
++      setSubmitStatus('error');
++    } finally {
++      setIsSubmitting(false);
++    }
++  };
+@@
+-                <motion.button
+-                  type="submit"
+-                  className="w-full md:w-auto mx-auto block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg transition-all duration-300"
+-                  whileHover={{ scale: 1.05 }}
+-                  whileTap={{ scale: 0.95 }}
+-                  style={{
+-                    boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.3)'
+-                  }}
+-                >
+-                  <Sparkles className="inline w-5 h-5 mr-2" />
+-                  Enviar Propuesta
+-                  <ChevronRight className="inline w-5 h-5 ml-2" />
+-                </motion.button>
++                <motion.button
++                  type="submit"
++                  disabled={isSubmitting}
++                  className={w-full md:w-auto mx-auto block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg transition-all duración-300 }
++                  whileHover={isSubmitting ? undefined : { scale: 1.05 }}
++                  whileTap={isSubmitting ? undefined : { scale: 0.95 }}
++                  style={{
++                    boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.3)'
++                  }}
++                >
++                  <Sparkles className="inline w-5 h-5 mr-2" />
++                  {isSubmitting ? 'Enviando...' : 'Enviar Propuesta'}
++                  <ChevronRight className="inline w-5 h-5 ml-2" />
++                </motion.button>
++                <div className="text-center text-sm" aria-live="polite">
++                  {submitStatus === 'success' && (
++                    <p className="text-green-400 mt-4">¡Gracias! Revisaremos tu mensaje y nos pondremos en contacto pronto.</p>
++                  )}
++                  {submitStatus === 'error' && (
++                    <p className="text-red-400 mt-4">Hubo un problema al enviar el formulario. Inténtalo de nuevo.</p>
++                  )}
++                </div>

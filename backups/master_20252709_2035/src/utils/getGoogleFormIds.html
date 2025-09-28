@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obtener IDs de Google Form</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .step {
+            background: #f7f7f7;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .step h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .step p {
+            margin: 5px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .highlight {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .warning h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Configuración de Google Form</h1>
+        <p class="subtitle">Herramienta para obtener los IDs correctos de tu formulario</p>
+
+        <div class="warning">
+            <h4>⚠️ Importante</h4>
+            <p>Para que el formulario funcione correctamente, necesitamos obtener los IDs de los campos del Google Form.</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 1: Abre tu Google Form</h3>
+            <p>Abre el formulario en modo de edición:</p>
+            <p><a href="https://forms.gle/cQYQMFmVXEEZmRpU6" target="_blank">https://forms.gle/cQYQMFmVXEEZmRpU6</a></p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Obtén el Form ID</h3>
+            <p>1. En la barra de direcciones, busca un URL como:</p>
+            <p><code>https://docs.google.com/forms/d/<span class="highlight">[FORM_ID]</span>/edit</code></p>
+            <p>2. Copia el ID que está entre <code>/d/</code> y <code>/edit</code></p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Abre el formulario en modo vista previa</h3>
+            <p>1. Haz clic en el botón "Vista previa" (ojo) en la parte superior derecha</p>
+            <p>2. Abre las herramientas de desarrollo del navegador (F12)</p>
+            <p>3. Ve a la pestaña "Elements" o "Elementos"</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 4: Encuentra los IDs de los campos</h3>
+            <p>Para cada campo del formulario:</p>
+            <p>1. Haz clic derecho en el campo → "Inspeccionar"</p>
+            <p>2. Busca el atributo <code>name="entry.XXXXXXX"</code></p>
+            <p>3. Anota el número después de "entry."</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 5: Completa los IDs encontrados</h3>
+            <form id="formConfig">
+                <p><strong>Form ID:</strong></p>
+                <input type="text" id="formId" placeholder="Ejemplo: 1FAIpQLSd..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                
+                <p><strong>Campo Nombre (entry.XXXXX):</strong></p>
+                <input type="text" id="nameEntry" placeholder="Ejemplo: entry.1234567890" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                
+                <p><strong>Campo Email (entry.XXXXX):</strong></p>
+                <input type="text" id="emailEntry" placeholder="Ejemplo: entry.9876543210" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                
+                <p><strong>Campo Tipo de Proyecto (entry.XXXXX):</strong></p>
+                <input type="text" id="projectEntry" placeholder="Ejemplo: entry.1111111111" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                
+                <p><strong>Campo Descripción (entry.XXXXX):</strong></p>
+                <input type="text" id="descriptionEntry" placeholder="Ejemplo: entry.2222222222" style="width: 100%; padding: 8px; margin-bottom: 20px;">
+                
+                <button type="button" onclick="generateCode()">Generar Código</button>
+            </form>
+        </div>
+
+        <div id="result" style="display: none;">
+            <div class="success">
+                <h4>✅ Código Generado</h4>
+                <p>Copia este código y reemplaza las líneas correspondientes en tu archivo PortfolioPage.jsx:</p>
+            </div>
+            <div class="code-block">
+                <pre id="generatedCode"></pre>
+            </div>
+            <button onclick="copyCode()">📋 Copiar Código</button>
+        </div>
+    </div>
+
+    <script>
+        function generateCode() {
+            const formId = document.getElementById('formId').value;
+            const nameEntry = document.getElementById('nameEntry').value;
+            const emailEntry = document.getElementById('emailEntry').value;
+            const projectEntry = document.getElementById('projectEntry').value;
+            const descriptionEntry = document.getElementById('descriptionEntry').value;
+
+            if (!formId || !nameEntry || !emailEntry || !projectEntry || !descriptionEntry) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            const code = `// Configuración del Google Form
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/${formId}/formResponse';
+
+const GOOGLE_FORM_FIELDS = {
+  name: '${nameEntry}',
+  email: '${emailEntry}',
+  projectType: '${projectEntry}',
+  description: '${descriptionEntry}'
+};`;
+
+            document.getElementById('generatedCode').textContent = code;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('¡Código copiado al portapapeles!');
+            });
+        }
+    </script>
+</body>
+</html>

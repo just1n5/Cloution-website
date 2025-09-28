@@ -1,41 +1,25 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- src/ hosts the React app; keep feature components in src/components/, route views in src/pages/, structured copy in src/data/, and shared hooks in src/hooks/.
-- Heavy visuals belong in src/icons/ or src/portfolio_screenshots/ (group per client), while reusable graphics stay under utils/.
-- Place raw assets in public/, keep architectural notes in docs/, and store compliance PDFs in legal_docs/.
-- Review docs/ARCHITECTURE.md before reshaping flows or adding new sections.
+Keep the React app inside `src/`. Route entry lives in `src/main.jsx`, while reusable UI belongs in `src/components/`, view-level screens in `src/pages/`, shared data in `src/data/`, runtime helpers in `src/hooks/`, visual assets in `src/icons/`, and cross-cutting utilities in `src/utils/`. Use `src/config/` for client settings rather than hard-coding. Store public-facing assets under `public/`, project notes in `docs/` (review `docs/ARCHITECTURE.md` before reshaping flows), and compliance paperwork in `legal_docs/`.
 
 ## Build, Test, and Development Commands
-- 
-pm install aligns local dependencies after cloning or package updates.
-- 
-pm run dev launches Vite with hot reload and opens the preview.
-- 
-pm run build generates dist/; treat warnings as blockers and address them before merging.
-- 
-pm run preview smoke-tests the build artifact.
-- 
-pm run lint runs ESLint; pair with 
-pm run clean && npm run reinstall if Node tooling misbehaves.
+- `npm install`: sync dependencies after cloning or package updates.
+- `npm run dev`: start Vite with hot reload at the local host.
+- `npm run build`: create the production bundle in `dist/`; treat warnings as blockers.
+- `npm run preview`: serve the latest build for a smoke test.
+- `npm run lint`: run ESLint across the workspace.
+- `npm run clean` then `npm run reinstall`: reset tooling if node modules behave unexpectedly.
+- `npm run deploy:preview|staging|production`: push builds to the corresponding Firebase targets.
 
 ## Coding Style & Naming Conventions
-- Stick to functional React with hooks, two-space indentation, and the surrounding quote style.
-- Maintain trailing commas in multiline literals; Tailwind utilities read layout ? spacing ? color ? motion.
-- Components, pages, and icons use PascalCase (HeroSection.jsx), hooks use useCamelCase, helpers stay camelCase.
+Use functional React with hooks, two-space indentation, and single quotes for strings. Preserve trailing commas in multiline literals. Compose Tailwind utility classes in the order layout > spacing > color > motion. Name components, pages, and icons with PascalCase (for example `HeroSection.jsx`); hooks use the `use` prefix (`useFormState`), and helpers stay camelCase.
 
 ## Testing Guidelines
-- No automated suite ships yet; document manual verification steps in PR descriptions.
-- When adding tests, colocate files (e.g., src/components/Hero.test.jsx) using Vitest with React Testing Library.
-- Keep fixtures lightweight and ensure any new scripts are added to package.json.
+No automated suite ships yet, so describe the manual checks you performed in each PR. When adding coverage, colocate Vitest files beside the component (for example `src/components/Hero.test.jsx`) and rely on React Testing Library. Until a `test` script is added, run targeted suites with `npx vitest run` or `npx vitest watch`.
 
 ## Commit & Pull Request Guidelines
-- Use Conventional Commit prefixes (eat:, ix:, chore:); keep commits focused and include rationale when context is non-obvious.
-- Run 
-pm run build and 
-pm run lint before opening a PR.
-- PRs should describe the change, note affected routes or components, link tickets, and include before/after screenshots for UI work.
+Follow Conventional Commits such as `feat: add hero animation` or `fix: correct form validation`, keeping each commit focused. Before opening a PR, run `npm run build` and `npm run lint`, and resolve all warnings. PR descriptions should explain the change, flag affected routes or components, link tickets, and include before/after screenshots for UI shifts.
 
 ## Security & Configuration Tips
-- Never commit real secrets; copy .env.example to .env for local runs and update both the example and docs/DEPLOYMENT.md if variables change.
-- Coordinate with stakeholders before editing legal_docs/ and keep shared graphics centralized under utils/.
+Never commit real secrets. Copy `.env.example` to `.env` for local runs and update both the example file and `docs/DEPLOYMENT.md` if configuration variables change. Coordinate with stakeholders before editing anything in `legal_docs/`, and centralize shared graphics under `utils/` to avoid duplication.

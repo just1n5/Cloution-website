@@ -1,4 +1,4 @@
-# 📁 Portfolio - Documentación
+﻿# 📁 Portfolio - Documentación
 
 ## 📸 Screenshots y Videos
 
@@ -116,11 +116,11 @@ Cada proyecto muestra:
      name: 'Nombre del Proyecto',
      category: ['wordpress', 'corporativo'],
      images: {
-       desktop: '/src/portfolio_screenshots/[carpeta]/desktop.png',
-       mobile: '/src/portfolio_screenshots/[carpeta]/mobile.png',
-       tablet: '/src/portfolio_screenshots/[carpeta]/tablet.png'
+       desktop: '/portfolio/portfolio_screenshots/[carpeta]/desktop.png',
+       mobile: '/portfolio/portfolio_screenshots/[carpeta]/mobile.png',
+       tablet: '/portfolio/portfolio_screenshots/[carpeta]/tablet.png'
      },
-     video: '/src/portfolio_screenshots/[carpeta]/video.mp4', // o null
+     video: '/portfolio/portfolio_screenshots/[carpeta]/video.mp4', // o null
      technologies: ['WordPress', 'etc'],
      description: 'Descripción breve',
      features: [
@@ -242,3 +242,4 @@ Para cualquier problema o sugerencia sobre el portfolio:
 **Última actualización**: Diciembre 2024
 **Versión**: 1.0.0
 **Mantenido por**: Equipo Cloution
+

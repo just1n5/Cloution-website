@@ -1,0 +1,11 @@
+# Firebase files
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+firestore.rules
+firestore.indexes.json
+storage.rules
+database.rules.json
+pubsub-debug.log
+ui-debug.log

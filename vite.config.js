@@ -15,20 +15,38 @@ export default defineConfig({
       '@portfolio': path.resolve(__dirname, './src/portfolio_screenshots')
     }
   },
-  // Configuración para manejar archivos grandes (videos)
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
+  },
   build: {
-    chunkSizeWarningLimit: 2000,
+    target: 'es2015',
+    chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          animations: ['framer-motion'],
-          icons: ['lucide-react']
+        manualChunks(id) {
+          // Asegurar que React siempre esté en el mismo chunk
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) {
+              return 'react-vendor';
+            }
+            
+            // Separar bibliotecas pesadas
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'three-vendor';
+            }
+            
+            if (id.includes('framer-motion')) {
+              return 'framer-vendor';
+            }
+            
+            if (id.includes('lucide-react')) {
+              return 'icons-vendor';
+            }
+          }
         }
       }
     }
   },
-  // Asegurar que los archivos estáticos se sirvan correctamente
   publicDir: 'public',
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.svg', '**/*.mp4', '**/*.webm']
 })

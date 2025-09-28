@@ -1,29 +1,29 @@
-# 🔥 Script de Setup para Firebase - Cloution Website (Windows)
+﻿# Script de Setup para Firebase - Cloution Website (Windows)
 # Este script configura Firebase Hosting para el proyecto
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "   🔥 SETUP FIREBASE - CLOUTION WEBSITE 🔥    " -ForegroundColor Cyan
+Write-Host "            SETUP FIREBASE - CLOUTION             " -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Función para mostrar mensajes
+# Funciones para mostrar mensajes
 function Show-Success {
     param($Message)
-    Write-Host "✓ $Message" -ForegroundColor Green
+    Write-Host "[OK] $Message" -ForegroundColor Green
 }
 
 function Show-Error {
     param($Message)
-    Write-Host "✗ $Message" -ForegroundColor Red
+    Write-Host "[ERROR] $Message" -ForegroundColor Red
 }
 
 function Show-Warning {
     param($Message)
-    Write-Host "⚠ $Message" -ForegroundColor Yellow
+    Write-Host "[AVISO] $Message" -ForegroundColor Yellow
 }
 
 # Verificar Node.js
-Write-Host "🔍 Verificando pre-requisitos..." -ForegroundColor White
+Write-Host "Verificando pre-requisitos..." -ForegroundColor White
 try {
     $nodeVersion = node --version 2>$null
     if ($nodeVersion) {
@@ -54,7 +54,7 @@ try {
 
 # Instalar Firebase CLI si no existe
 Write-Host ""
-Write-Host "📦 Verificando Firebase CLI..." -ForegroundColor White
+Write-Host "Comprobando Firebase CLI..." -ForegroundColor White
 try {
     $firebaseVersion = firebase --version 2>$null
     if ($firebaseVersion) {
@@ -72,11 +72,15 @@ try {
 } catch {
     Show-Warning "Firebase CLI no encontrado. Instalando..."
     npm install -g firebase-tools
+    if ($LASTEXITCODE -ne 0) {
+        Show-Error "No se pudo instalar Firebase CLI"
+        exit 1
+    }
 }
 
 # Instalar dependencias del proyecto
 Write-Host ""
-Write-Host "📦 Instalando dependencias del proyecto..." -ForegroundColor White
+Write-Host "Instalando dependencias del proyecto..." -ForegroundColor White
 npm install
 if ($LASTEXITCODE -eq 0) {
     Show-Success "Dependencias instaladas"
@@ -87,7 +91,7 @@ if ($LASTEXITCODE -eq 0) {
 
 # Login en Firebase
 Write-Host ""
-Write-Host "🔐 Autenticación con Firebase..." -ForegroundColor White
+Write-Host "Autenticación con Firebase..." -ForegroundColor White
 Write-Host "Se abrirá el navegador para autenticarte." -ForegroundColor Yellow
 Read-Host "Presiona Enter para continuar..."
 firebase login
@@ -100,7 +104,7 @@ if ($LASTEXITCODE -eq 0) {
 
 # Seleccionar proyecto
 Write-Host ""
-Write-Host "📋 Proyectos disponibles:" -ForegroundColor White
+Write-Host "Proyectos disponibles:" -ForegroundColor White
 firebase projects:list
 
 Write-Host ""
@@ -133,7 +137,7 @@ switch ($env_choice) {
 Write-Host ""
 $build_choice = Read-Host "¿Deseas hacer build del proyecto ahora? (s/n)"
 if ($build_choice -eq "s" -or $build_choice -eq "S") {
-    Write-Host "🔨 Construyendo proyecto..." -ForegroundColor White
+    Write-Host "Construyendo proyecto..." -ForegroundColor White
     npm run build
     if ($LASTEXITCODE -eq 0) {
         Show-Success "Build completado"
@@ -147,8 +151,8 @@ if ($build_choice -eq "s" -or $build_choice -eq "S") {
 Write-Host ""
 $deploy_choice = Read-Host "¿Deseas hacer deploy ahora? (s/n)"
 if ($deploy_choice -eq "s" -or $deploy_choice -eq "S") {
-    Write-Host "🚀 Desplegando a Firebase Hosting..." -ForegroundColor White
-    
+    Write-Host "Desplegando a Firebase Hosting..." -ForegroundColor White
+
     switch ($env_choice) {
         "1" {
             npm run deploy:staging
@@ -157,7 +161,7 @@ if ($deploy_choice -eq "s" -or $deploy_choice -eq "S") {
             npm run deploy:staging
         }
         "3" {
-            $prod_confirm = Read-Host "⚠️ ¿Estás SEGURO de deployar a PRODUCCIÓN? (escribir 'SI')"
+            $prod_confirm = Read-Host "¿Estás SEGURO de desplegar a PRODUCCIÓN? (escribe 'SI')"
             if ($prod_confirm -eq "SI") {
                 npm run deploy:production
             } else {
@@ -165,26 +169,26 @@ if ($deploy_choice -eq "s" -or $deploy_choice -eq "S") {
             }
         }
     }
-    
+
     if ($LASTEXITCODE -eq 0) {
         Show-Success "Deploy completado exitosamente"
         Write-Host ""
-        Write-Host "🌐 URLs del proyecto:" -ForegroundColor White
+        Write-Host "URLs del proyecto:" -ForegroundColor White
         firebase hosting:sites
     }
 }
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "         ✅ SETUP COMPLETADO                   " -ForegroundColor Green
+Write-Host "               SETUP COMPLETADO                  " -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📚 Comandos útiles:" -ForegroundColor Yellow
-Write-Host "  npm run dev              - Desarrollo local"
-Write-Host "  npm run build            - Build de producción"
-Write-Host "  npm run deploy:staging   - Deploy a staging"
-Write-Host "  npm run deploy:preview   - Preview temporal"
+Write-Host "Comandos útiles:" -ForegroundColor Yellow
+Write-Host "  npm run dev                - Desarrollo local"
+Write-Host "  npm run build              - Build de producción"
+Write-Host "  npm run deploy:staging     - Deploy a staging"
+Write-Host "  npm run deploy:preview     - Preview temporal"
 Write-Host "  npm run firebase:emulators - Emulador local"
 Write-Host ""
-Write-Host "📖 Documentación completa en: docs/FIREBASE_DEPLOYMENT.md" -ForegroundColor Cyan
+Write-Host "Documentación completa en: docs/FIREBASE_DEPLOYMENT.md" -ForegroundColor Cyan
 Write-Host ""

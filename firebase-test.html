@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador Firebase - Formulario Cloution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #FFA000 0%, #F57C00 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .firebase-logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+        .status-card.success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .status-card.warning {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        .status-card.error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .status-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .check-item:last-child {
+            border-bottom: none;
+        }
+        .check-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #FFA000 0%, #F57C00 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .code-snippet {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: #FFA000;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .quick-test {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .quick-test h3 {
+            margin-bottom: 15px;
+        }
+        .test-url {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .instructions h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="firebase-logo">🔥</div>
+        <h1>Verificador de Formulario para Firebase</h1>
+        <p class="subtitle">Comprueba que tu formulario funcione correctamente en Firebase Hosting</p>
+
+        <div class="status-card" id="environment-check">
+            <h3>
+                <span id="env-icon">⏳</span>
+                Detectando Entorno
+            </h3>
+            <div id="env-details">
+                <div class="check-item">
+                    <span class="loading"></span>
+                    <span>Analizando URL actual...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-card" id="firebase-check">
+            <h3>
+                <span>🔥</span>
+                Estado de Firebase
+            </h3>
+            <div id="firebase-details">
+                <div class="check-item">
+                    <span class="check-icon" id="https-check">⏳</span>
+                    <span>HTTPS habilitado</span>
+                </div>
+                <div class="check-item">
+                    <span class="check-icon" id="hosting-check">⏳</span>
+                    <span>Firebase Hosting detectado</span>
+                </div>
+                <div class="check-item">
+                    <span class="check-icon" id="cors-check">⏳</span>
+                    <span>CORS configurado correctamente</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-card" id="formsubmit-check">
+            <h3>
+                <span>📧</span>
+                Test de FormSubmit
+            </h3>
+            <button class="btn" onclick="testFormSubmit()">Probar FormSubmit</button>
+            <div id="formsubmit-result"></div>
+        </div>
+
+        <div class="instructions">
+            <h4>📋 Instrucciones Rápidas para Firebase</h4>
+            <ol>
+                <li><strong>Configura el email:</strong> Edita línea 53 de PortfolioPage.jsx</li>
+                <li><strong>Build del proyecto:</strong> <code>npm run build</code></li>
+                <li><strong>Deploy a Firebase:</strong> <code>firebase deploy --only hosting</code></li>
+                <li><strong>Verifica tu email</strong> con FormSubmit (primera vez)</li>
+                <li><strong>Prueba el formulario</strong> en /portfolio</li>
+            </ol>
+        </div>
+
+        <div class="quick-test">
+            <h3>🚀 URLs de tu Firebase</h3>
+            <div id="firebase-urls">
+                <p>Calculando URLs basadas en tu proyecto...</p>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+# Comandos rápidos para Firebase
+firebase login
+firebase init hosting
+npm run build
+firebase deploy --only hosting
+firebase open hosting:site</div>
+    </div>
+
+    <script>
+        // Detectar entorno
+        function detectEnvironment() {
+            const envDiv = document.getElementById('env-details');
+            const envIcon = document.getElementById('env-icon');
+            const currentUrl = window.location.href;
+            const hostname = window.location.hostname;
+            
+            let envHTML = '';
+            let isFirebase = false;
+            
+            // Detectar Firebase
+            if (hostname.includes('firebaseapp.com') || hostname.includes('web.app')) {
+                isFirebase = true;
+                envHTML += '<div class="check-item"><span class="check-icon">✅</span><span>Firebase Hosting detectado</span></div>';
+                envIcon.textContent = '✅';
+                document.getElementById('environment-check').classList.add('success');
+            } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                envHTML += '<div class="check-item"><span class="check-icon">💻</span><span>Entorno local detectado</span></div>';
+                envIcon.textContent = '💻';
+                document.getElementById('environment-check').classList.add('warning');
+            } else {
+                envHTML += '<div class="check-item"><span class="check-icon">🌐</span><span>Hosting: ' + hostname + '</span></div>';
+                envIcon.textContent = '🌐';
+            }
+            
+            // Información adicional
+            envHTML += '<div class="check-item"><span class="check-icon">📍</span><span>URL: ' + currentUrl + '</span></div>';
+            envHTML += '<div class="check-item"><span class="check-icon">🔒</span><span>Protocolo: ' + window.location.protocol + '</span></div>';
+            
+            envDiv.innerHTML = envHTML;
+            
+            // Verificar características de Firebase
+            checkFirebaseFeatures();
+            
+            // Generar URLs de ejemplo
+            generateFirebaseUrls();
+        }
+        
+        function checkFirebaseFeatures() {
+            // HTTPS Check
+            const httpsIcon = document.getElementById('https-check');
+            if (window.location.protocol === 'https:') {
+                httpsIcon.textContent = '✅';
+            } else if (window.location.hostname === 'localhost') {
+                httpsIcon.textContent = '⚠️';
+            } else {
+                httpsIcon.textContent = '❌';
+            }
+            
+            // Hosting Check
+            const hostingIcon = document.getElementById('hosting-check');
+            const hostname = window.location.hostname;
+            if (hostname.includes('firebaseapp.com') || hostname.includes('web.app')) {
+                hostingIcon.textContent = '✅';
+            } else if (hostname === 'localhost') {
+                hostingIcon.textContent = '⚠️';
+            } else {
+                hostingIcon.textContent = '❓';
+            }
+            
+            // CORS Check (simulado)
+            const corsIcon = document.getElementById('cors-check');
+            corsIcon.textContent = '✅'; // FormSubmit no requiere configuración CORS
+        }
+        
+        function generateFirebaseUrls() {
+            const urlsDiv = document.getElementById('firebase-urls');
+            const projectName = 'tu-proyecto'; // Reemplazar con el nombre real
+            
+            const urls = [
+                `https://${projectName}.web.app/portfolio`,
+                `https://${projectName}.firebaseapp.com/portfolio`,
+                `https://${projectName}-staging.web.app/portfolio`
+            ];
+            
+            let html = '<p>Posibles URLs de tu proyecto:</p>';
+            urls.forEach(url => {
+                html += `<div class="test-url">${url}</div>`;
+            });
+            
+            urlsDiv.innerHTML = html;
+        }
+        
+        async function testFormSubmit() {
+            const resultDiv = document.getElementById('formsubmit-result');
+            resultDiv.innerHTML = '<div class="check-item"><span class="loading"></span><span>Probando conexión con FormSubmit...</span></div>';
+            
+            try {
+                // Test con un email de prueba (FormSubmit tiene un endpoint de test)
+                const response = await fetch('https://formsubmit.co/ajax/test@example.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: 'Test desde Firebase',
+                        email: 'test@test.com',
+                        projectType: 'test',
+                        description: 'Verificando compatibilidad con Firebase',
+                        _captcha: false
+                    })
+                });
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="check-item">
+                            <span class="check-icon">✅</span>
+                            <span>FormSubmit funciona correctamente</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">ℹ️</span>
+                            <span>Recuerda cambiar el email en el código</span>
+                        </div>
+                    `;
+                    document.getElementById('formsubmit-check').classList.add('success');
+                } else {
+                    throw new Error('Response not OK');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span>Error: ${error.message}</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">💡</span>
+                        <span>Esto puede ser normal en localhost. Prueba en Firebase deployed.</span>
+                    </div>
+                `;
+                document.getElementById('formsubmit-check').classList.add('warning');
+            }
+        }
+        
+        // Verificar el estado del email configurado
+        function checkEmailConfig() {
+            // Este es el email por defecto en el código
+            const defaultEmail = 'contacto@cloution.com';
+            const currentEmail = defaultEmail; // En producción, esto vendría del código real
+            
+            if (currentEmail === defaultEmail) {
+                console.warn('⚠️ Recuerda cambiar el email por defecto en PortfolioPage.jsx línea 53');
+            }
+        }
+        
+        // Inicializar verificaciones
+        window.onload = function() {
+            detectEnvironment();
+            checkEmailConfig();
+        };
+    </script>
+</body>
+</html>

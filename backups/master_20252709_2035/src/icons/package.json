@@ -1,0 +1,43 @@
+{
+  "name": "cloution-3d-icons",
+  "version": "1.0.0",
+  "description": "3D icon components for Cloution solar system visualization",
+  "dependencies": {
+    "three": "^0.160.0",
+    "@react-three/fiber": "^8.15.12",
+    "@react-three/drei": "^9.92.7"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.160.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "types": "./index.ts"
+    },
+    "./solar-system": {
+      "import": "./SolarSystem.tsx",
+      "types": "./SolarSystem.tsx"
+    },
+    "./about": {
+      "import": "./AboutWithSolarSystem.tsx",
+      "types": "./AboutWithSolarSystem.tsx"
+    },
+    "./examples": {
+      "import": "./IconExamples.tsx",
+      "types": "./IconExamples.tsx"
+    },
+    "./preview": {
+      "import": "./IconPreview.tsx",
+      "types": "./IconPreview.tsx"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "preview": "vite --config vite.preview.config.js"
+  }
+}
