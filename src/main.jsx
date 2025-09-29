@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
+import Header from './components/Header.jsx' // Importar Header
+import Footer from './components/Footer.jsx' // Importar Footer
 import './index.css'
 
 // Lazy loading de páginas secundarias
@@ -40,7 +42,7 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-6xl font-bold text-white mb-4">404</h1>
-        <p className="text-xl text-gray-300 mb-8">{'P\u00E1gina no encontrada'}</p>
+        <p className="text-xl text-gray-300 mb-8">{'Página no encontrada'}</p>
         <a 
           href="/" 
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -67,14 +69,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {/* Ruta del portafolio */}
           <Route path="/portafolio-web" element={
             <Layout>
+              <Header />
               <PortfolioPage />
+              <Footer />
             </Layout>
           } />
           
           {/* Rutas dinámicas para casos de estudio */}
           <Route path="/portafolio/:slug" element={
             <Layout>
+              <Header />
               <CaseStudyPage />
+              <Footer />
             </Layout>
           } />
           

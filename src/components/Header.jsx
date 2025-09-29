@@ -11,7 +11,7 @@ const Header = () => {
   const navigate = useNavigate()
 
   const navItems = [
-    { name: 'Inicio', href: '/', type: 'route' },
+    { name: 'Inicio', href: '#inicio', type: 'anchor' },
     { name: 'Nosotros', href: '#nosotros', type: 'anchor' },
     { name: 'Servicios', href: '#servicios', type: 'anchor' },
     { name: 'Portfolio', href: '/portafolio-web', type: 'route', highlight: true },
@@ -24,7 +24,6 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
       
-      // Solo detectar sección activa si estamos en el home
       if (location.pathname === '/') {
         const sections = ['inicio', 'nosotros', 'servicios', 'desarrollo-web', 'filosofia', 'contacto']
         const current = sections.find(section => {
@@ -45,17 +44,14 @@ const Header = () => {
 
   const handleNavClick = (e, item) => {
     if (item.type === 'route') {
-      // Para rutas, dejamos que React Router maneje la navegación
       setIsMobileMenuOpen(false)
       return
     }
     
     e.preventDefault()
     
-    // Si estamos en una página diferente al home y queremos ir a una sección
     if (location.pathname !== '/' && item.type === 'anchor') {
       navigate('/')
-      // Esperar a que se cargue el home y luego hacer scroll
       setTimeout(() => {
         const targetId = item.href.replace('#', '')
         const element = document.getElementById(targetId)
@@ -64,7 +60,6 @@ const Header = () => {
         }
       }, 100)
     } else {
-      // Si ya estamos en home, solo hacer scroll
       const targetId = item.href.replace('#', '')
       const element = document.getElementById(targetId)
       if (element) {
@@ -97,6 +92,7 @@ const Header = () => {
           {/* Logo */}
           <Link 
             to="/"
+            onClick={(e) => handleNavClick(e, { href: '#inicio', type: 'anchor' })}
             className="flex items-center space-x-3"
           >
             <motion.div
@@ -114,7 +110,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden xl:flex items-center space-x-8">
             {navItems.map((item, index) => {
               const isItemActive = isActive(item)
               
@@ -195,7 +191,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white p-2"
+            className="xl:hidden text-white p-2"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -209,7 +205,7 @@ const Header = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden mt-4 pb-4"
+              className="xl:hidden mt-4 pb-4"
             >
               <div className="flex flex-col space-y-4">
                 {navItems.map((item, index) => {

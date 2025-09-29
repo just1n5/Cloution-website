@@ -4,17 +4,13 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [react()],
   server: {
     port: 3000,
     open: true
   },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@portfolio': path.resolve(__dirname, './src/portfolio_screenshots')
-    }
-  },
+
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom']
   },

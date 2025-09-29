@@ -17,7 +17,7 @@ echo ✓ Node.js detectado
 echo.
 
 echo Generando iconos placeholder...
-node scripts/generatePWAIcons.js
+node scripts/generatePWAIcons.cjs
 
 echo.
 echo ========================================

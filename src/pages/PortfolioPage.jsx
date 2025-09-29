@@ -33,13 +33,6 @@ const INITIAL_FORM_DATA = {
   description: ''
 };
 
-// IMPORTANTE: Para configurar el formulario correctamente:
-// 1. Abre src/config/formConfig.js
-// 2. Reemplaza 'tu-email@ejemplo.com' con tu email real
-// 3. O sigue las instrucciones en FORMULARIO_FIX.md para usar Google Forms
-
-// Configuración temporal - ACTUALIZAR con los IDs correctos del formulario
-// Enlace del formulario: https://forms.gle/cQYQMFmVXEEZmRpU6
 const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdNR8LdWXRiSNCdBj4iJacptpNQRXt4MfVXJTYq7HNpleclJA/formResponse';
 
 const GOOGLE_FORM_FIELDS = {
@@ -49,7 +42,6 @@ const GOOGLE_FORM_FIELDS = {
   description: 'entry.1015762588'
 };
 
-// Configuración alternativa usando FormSubmit (más confiable)
 const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/cloutionsas@gmail.com'; 
 
 const PortfolioPage = () => {
@@ -61,10 +53,8 @@ const PortfolioPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  // Usar los proyectos del archivo de datos
   const projects = portfolioProjects;
 
-  // Filtros disponibles con iconos
   const filters = [
     { id: 'todos', label: 'Todos', icon: Globe },
     { id: 'wordpress', label: 'WordPress', icon: Globe },
@@ -76,7 +66,6 @@ const PortfolioPage = () => {
     { id: 'premium', label: 'Premium', icon: Award }
   ];
 
-  // Usar el proceso del archivo de datos con iconos de Lucide
   const processSteps = workProcess.map(step => ({
     ...step,
     icon: step.number === '01' ? Target : 
@@ -102,7 +91,6 @@ const PortfolioPage = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Método 1: Intentar con FormSubmit (más confiable)
     try {
       const formSubmitResponse = await fetch(FORMSUBMIT_ENDPOINT, {
         method: 'POST',
@@ -134,7 +122,6 @@ const PortfolioPage = () => {
       console.log('FormSubmit falló, intentando con Google Forms...', error);
     }
 
-    // Método 2: Respaldo con Google Forms
     try {
       const payload = new FormData();
       payload.append(GOOGLE_FORM_FIELDS.name, formData.name);
@@ -148,7 +135,6 @@ const PortfolioPage = () => {
         body: payload
       });
       
-      // Con no-cors no podemos verificar la respuesta, asumimos éxito
       setSubmitStatus('success');
       setFormData({ ...INITIAL_FORM_DATA });
     } catch (error) {
@@ -169,14 +155,12 @@ const PortfolioPage = () => {
     setShowProjectModal(false);
   };
 
-  // Project Card Component
   const ProjectCard = ({ project, index }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [showVideo, setShowVideo] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
     const handleCardClick = (e) => {
-      // Prevenir que el click abra el modal si es en un botón específico
       if (e.target.closest('.no-modal-trigger')) {
         return;
       }
@@ -213,9 +197,7 @@ const PortfolioPage = () => {
               : '0 4px 20px rgba(0, 0, 0, 0.2)'
           }}
         >
-          {/* Imagen del proyecto con responsive */}
           <div className="aspect-[4/3] overflow-hidden relative">
-            {/* Video (si existe y hover) */}
             {project.video && showVideo && (
               <>
                 {!isVideoLoaded && (
@@ -237,7 +219,6 @@ const PortfolioPage = () => {
               </>
             )}
             
-            {/* Imagen por defecto */}
             <motion.img
               src={project.images.desktop}
               alt={project.name}
@@ -246,12 +227,10 @@ const PortfolioPage = () => {
               transition={{ duration: 0.6, ease: 'easeOut' }}
             />
             
-            {/* Badge de año y tooltip */}
             <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
               <span className="text-white text-sm font-medium">{project.year}</span>
             </div>
             
-            {/* Indicador de Click (tooltip) */}
             <motion.div
               className="absolute top-4 left-4 px-3 py-1.5 bg-blue-500/90 backdrop-blur-sm rounded-lg"
               initial={{ opacity: 0, x: -20 }}
@@ -267,7 +246,6 @@ const PortfolioPage = () => {
               </span>
             </motion.div>
             
-            {/* Overlay en hover */}
             <motion.div
               className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent"
               initial={{ opacity: 0 }}
@@ -299,7 +277,6 @@ const PortfolioPage = () => {
                   {project.description}
                 </motion.p>
                 
-                {/* Cliente y Resultado */}
                 <motion.div
                   className="flex items-center gap-4 text-sm text-gray-400 mb-3"
                   initial={{ y: 20, opacity: 0 }}
@@ -313,7 +290,6 @@ const PortfolioPage = () => {
                   <span className="text-green-400">✓ {project.result}</span>
                 </motion.div>
                 
-                {/* Tecnologías */}
                 <motion.div
                   className="flex flex-wrap gap-2 mb-4"
                   initial={{ y: 20, opacity: 0 }}
@@ -338,7 +314,6 @@ const PortfolioPage = () => {
                   )}
                 </motion.div>
                 
-                {/* CTA Botón */}
                 <motion.div
                   className="flex items-center justify-between"
                   initial={{ y: 20, opacity: 0 }}
@@ -369,7 +344,6 @@ const PortfolioPage = () => {
             </motion.div>
           </div>
           
-          {/* Información básica siempre visible */}
           <div className="p-4 bg-slate-900/50">
             <h4 className="text-lg font-semibold text-white mb-1">{project.name}</h4>
             <p className="text-sm text-gray-400 mb-2">{project.client}</p>
@@ -385,7 +359,7 @@ const PortfolioPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 relative overflow-x-hidden">
+    <>
       {/* Efectos de fondo decorativos */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -393,7 +367,7 @@ const PortfolioPage = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
+      <section className="relative py-20 lg:py-32 pt-24 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-teal-600/10"></div>
         </div>
@@ -787,7 +761,7 @@ const PortfolioPage = () => {
           onClose={closeProjectModal}
         />
       )}
-    </div>
+    </>
   );
 };
 
